@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Raktarkezeles.Views.MainPage"
              xmlns:vm="clr-namespace:Raktarkezeles.ViewModels;assembly=Raktarkezeles"
-             Title="Raktárkezelés">
+             Title="Raktárkezelés" NavigationPage.HasNavigationBar="False">
     <ContentPage.BindingContext>
         <vm:MainPageViewModel/>
     </ContentPage.BindingContext>
@@ -27,12 +27,12 @@
                                     <BoxView Grid.Column="0" Color="LightBlue"/>
                                     <StackLayout Grid.Column="1" Orientation="Vertical">
                                         <Label Text="{Binding Name}" FontAttributes="Bold" FontSize="Large" LineBreakMode="TailTruncation" TextColor="Black"/>
-                                        <Label Text="{Binding Gyarto}" FontSize="16" TextColor="Black"/>
-                                        <Label Text="{Binding Kategoria}" FontSize="16" TextColor="Black"/>
+                                        <Label Text="{Binding Manufacturer.Name}" FontSize="16" TextColor="Black"/>
+                                        <Label Text="{Binding Category.Name}" FontSize="16" TextColor="Black"/>
                                     </StackLayout>
                                     <StackLayout Grid.Column="2" Orientation="Horizontal" HorizontalOptions="End" Padding="10,0,10,0">
-                                        <Label Text="{Binding Mennyiseg}" FontSize="Large" VerticalOptions="Center" TextColor="Black"/>
-                                        <Label Text="db" FontSize="Medium" VerticalOptions="Center" TextColor="Black"/>
+                                        <Label Text="{Binding Quantity}" FontSize="Large" VerticalOptions="Center" TextColor="Black"/>
+                                        <Label Text="{Binding Unit.ShortName}" FontSize="Medium" VerticalOptions="Center" TextColor="Black"/>
                                     </StackLayout>
                                 </Grid>
                             </ViewCell>

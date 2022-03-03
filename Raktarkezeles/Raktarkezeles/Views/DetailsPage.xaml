@@ -1,12 +1,78 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Raktarkezeles.Views.DetailsPage">
+             x:Class="Raktarkezeles.Views.DetailsPage"
+             xmlns:vm="clr-namespace:Raktarkezeles.ViewModels;assembly=Raktarkezeles">
+    <ContentPage.BindingContext>
+        <vm:DetailsPageViewModel/>
+    </ContentPage.BindingContext>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="modify" Text="Szerkesztés" Order="Primary"  Priority="0"/>
+        <ToolbarItem x:Name="delete" Text="Törlés" Order="Primary" Priority="1"/>
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
+        <AbsoluteLayout>
+            <ScrollView AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                    <BoxView BackgroundColor="LightBlue" HeightRequest="250"/>
+                    <StackLayout Orientation="Horizontal" Padding="10,15,10,5">
+                        <Label Text="{Binding Part.Name}" FontSize="25" FontAttributes="Bold" TextColor="Black" LineBreakMode="TailTruncation" HorizontalOptions="Start" VerticalOptions="Center"/>
+                        <Label Text="{Binding Part.Manufacturer.Name}" FontSize="17" TextColor="Black" VerticalOptions="Center" HorizontalOptions="EndAndExpand" LineBreakMode="TailTruncation"/>
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="Típus:" FontSize="17" Padding="10,0,0,0" TextColor="Black"/>
+                        <Label Text="{Binding Part.TypeNumber}" FontSize="17" Padding="5,0,0,0" TextColor="Black"/>
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="Cikkszám:" FontSize="17" Padding="10,0,0,0" TextColor="Black"/>
+                        <Label Text="{Binding Part.ItemNumber}" FontSize="17" Padding="5,0,0,0" TextColor="Black"/>
+                    </StackLayout>
+                    <Label Text="Leírás:" FontSize="17" Padding="10,0,0,0" TextColor="Black"/>
+                    <Label Text="{Binding Part.Description}" Margin="15,0,15,0" FontSize="15"/>
+                    <ListView SelectionMode="None" ItemsSource="{Binding Occurrences}" RowHeight="75" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <SwipeView VerticalOptions="FillAndExpand">
+                                        <SwipeView.RightItems>
+                                            <SwipeItems>
+                                                <SwipeItem Text="Törlés" BackgroundColor="Red"/>
+                                            </SwipeItems>
+                                        </SwipeView.RightItems>
+                                        <Grid Padding="10,0,40,0" BackgroundColor="White">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="2*"/>
+                                                <RowDefinition Height="1*"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="1*"/>
+                                                <ColumnDefinition Width="1*"/>
+                                                <ColumnDefinition Width="3*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Label Text="{Binding Warehouse.Name}" FontAttributes="Bold" FontSize="19" Padding="10,0,0,0" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" HorizontalOptions="Start" VerticalOptions="Center"/>
+                                            <StackLayout Grid.Column="0" Grid.Row="1" Padding="10,0,0,0" Orientation="Horizontal">
+                                                <Label Text="Polc:" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center" />
+                                                <Label Text="{Binding Rack}" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center" />
+                                            </StackLayout>
+                                            <StackLayout Grid.Column="1" Grid.Row="1" Padding="10,0,0,0" Orientation="Horizontal">
+                                                <Label Text="Szint:" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center" />
+                                                <Label Text="{Binding Shelf}" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center" />
+                                            </StackLayout>
+                                            <StackLayout Grid.Column="2" Grid.RowSpan="2" Orientation="Horizontal" >
+                                                <Button Text="-" WidthRequest="50"  FontSize="30"/>
+                                                <Button Text="{Binding Quantity}" WidthRequest="75"  FontSize="18"/>
+                                                <Button Text="+" WidthRequest="50" FontSize="30"/>
+                                                <Button Text="?" WidthRequest="50" FontSize="30"/>
+                                            </StackLayout>
+                                        </Grid>
+                                    </SwipeView>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <Button Text="Előfordulási hely hozzáadaása"/>
+                </StackLayout>
+            </ScrollView>
+        </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

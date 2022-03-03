@@ -11,7 +11,7 @@ namespace Raktarkezeles
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            MainPage = new NavigationPage(new DetailsPage());
         }
 
         protected override void OnStart()
