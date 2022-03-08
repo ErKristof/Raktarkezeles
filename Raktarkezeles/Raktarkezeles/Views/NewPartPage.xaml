@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Raktarkezeles.Views.NewPartPage">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout  VerticalOptions="FillAndExpand">
+                <BoxView BackgroundColor="LightBlue" HeightRequest="300"/>
+                <StackLayout Padding="10,0,10,0">
+                    <Entry Placeholder="Név" Text="{Binding NewPart.Name}"/>
+                    <Picker Title="Gyártó" ItemsSource="{Binding Manufacturers}" ItemDisplayBinding="{Binding Name}"/>
+                    <Entry Placeholder="Típus" Text="{Binding NewPart.TypeNumber}"/>
+                    <StackLayout Orientation="Horizontal">
+                        <Entry Placeholder="Cikkszám" Text="{Binding NewPart.ItemNumber}" HorizontalOptions="FillAndExpand"/>
+                        <Button Text="CAMERA" HorizontalOptions="End"/>
+                    </StackLayout>
+                    <Picker Title="Mennyiségi egység" ItemsSource="{Binding Units}" ItemDisplayBinding="{Binding FullName}"/>
+                    <Picker Title="Kategória" ItemsSource="{Binding Categories}" ItemDisplayBinding="{Binding Name}"/>
+                    <Editor Placeholder="Leírás" Text="{Binding NewPart.Description}" AutoSize="TextChanges" />
+                    <Button Text="Mentés"/>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

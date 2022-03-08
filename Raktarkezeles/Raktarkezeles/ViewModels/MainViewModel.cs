@@ -4,10 +4,13 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
 using Raktarkezeles.Models;
+using Raktarkezeles.Views;
+using Xamarin.Forms;
+using System.Windows.Input;
 
 namespace Raktarkezeles.ViewModels
 {
-    public class MainPageViewModel : INotifyPropertyChanged
+    public class MainViewModel : ViewModelBase
     {
         private ObservableCollection<Part> parts = new ObservableCollection<Part>();
 
@@ -19,9 +22,9 @@ namespace Raktarkezeles.ViewModels
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public ICommand GoToNewPartCommand { protected set; get; }
 
-        public MainPageViewModel()
+        public MainViewModel(INavigation navigation) : base(navigation)
         {
             Manufacturer siemens = new Manufacturer() { Id = 0, Name = "Siemens" };
             Manufacturer wago = new Manufacturer() { Id = 0, Name = "WAGO" };
@@ -40,11 +43,12 @@ namespace Raktarkezeles.ViewModels
             parts.Add(new Part() { Name = "Tápegység", Manufacturer = wago, Category = tapegyseg, Unit = darab, Quantity = 1234 });
             parts.Add(new Part() { Name = "Sorkapocs ", Manufacturer = phoenix, Category = sorkapocs, Unit = meter, Quantity = 74 });
             parts.Add(new Part() { Name = "Sorkapocs véglap", Manufacturer = siemens, Category = sorkapocsveg, Unit = meter, Quantity = 1 });
-        }
 
-        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
+            GoToNewPartCommand = new Command(GoToNewPartCommandExecute);
+        }
+        private async void GoToNewPartCommandExecute()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            await Navigation.PushAsync(new NewPartPage(), true);
         }
     }
 }

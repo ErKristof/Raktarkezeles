@@ -2,19 +2,15 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Raktarkezeles.Views.MainPage"
-             xmlns:vm="clr-namespace:Raktarkezeles.ViewModels;assembly=Raktarkezeles"
              Title="Raktárkezelés" NavigationPage.HasNavigationBar="False">
-    <ContentPage.BindingContext>
-        <vm:MainPageViewModel/>
-    </ContentPage.BindingContext>
     <ContentPage.Content>
         <AbsoluteLayout>
             <StackLayout Orientation="Vertical" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
                 <StackLayout Orientation="Horizontal">
                     <SearchBar x:Name="PartSearch" Placeholder="Keresés..." HorizontalOptions="FillAndExpand"/>
-                    <BoxView x:Name="CameraButton" Color="Crimson" HorizontalOptions="End"/>
+                    <Button x:Name="CameraButton" HorizontalOptions="End" Text="CAMERA"/>
                 </StackLayout>
-                <ListView x:Name="PartList" ItemsSource="{Binding Parts}" RowHeight="100" SelectionMode="None">
+                <ListView x:Name="PartList" ItemsSource="{Binding Parts}" RowHeight="100" SelectionMode="None" ItemTapped="PartList_ItemTapped">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <ViewCell>
@@ -40,7 +36,7 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </StackLayout>
-            <Button CornerRadius="40" Padding="0,0,0,0" BackgroundColor="LightBlue" Text="+" FontSize="48" TextColor="White" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds=".95,.95,80,80" />
+            <Button CornerRadius="40" Padding="0,0,0,0" BackgroundColor="LightBlue" Text="+" FontSize="48" TextColor="White" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds=".95,.95,80,80" Command="{Binding GoToNewPartCommand}"/>
         </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -11,12 +11,12 @@ using Xamarin.Forms.Xaml;
 namespace Raktarkezeles.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class DetailsPage : ContentPage
+    public partial class NewPartPage : ContentPage
     {
-        public DetailsPage()
+        public NewPartPage()
         {
             InitializeComponent();
-            this.BindingContext = new DetailsViewModel(Navigation);
+            this.BindingContext = new NewPartViewModel(Navigation);
         }
     }
 }

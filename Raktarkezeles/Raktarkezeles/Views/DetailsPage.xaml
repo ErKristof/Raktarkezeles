@@ -2,10 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Raktarkezeles.Views.DetailsPage"
-             xmlns:vm="clr-namespace:Raktarkezeles.ViewModels;assembly=Raktarkezeles">
-    <ContentPage.BindingContext>
-        <vm:DetailsPageViewModel/>
-    </ContentPage.BindingContext>
+             NavigationPage.HasBackButton="True">
     <ContentPage.ToolbarItems>
         <ToolbarItem x:Name="modify" Text="Szerkesztés" Order="Primary"  Priority="0"/>
         <ToolbarItem x:Name="delete" Text="Törlés" Order="Primary" Priority="1"/>
@@ -62,7 +59,7 @@
                                                 <Button Text="-" WidthRequest="50"  FontSize="30"/>
                                                 <Button Text="{Binding Quantity}" WidthRequest="75"  FontSize="18"/>
                                                 <Button Text="+" WidthRequest="50" FontSize="30"/>
-                                                <Button Text="?" WidthRequest="50" FontSize="30"/>
+                                                <Button Text=">" WidthRequest="50" FontSize="30"/>
                                             </StackLayout>
                                         </Grid>
                                     </SwipeView>
@@ -70,7 +67,7 @@
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
-                    <Button Text="Előfordulási hely hozzáadaása"/>
+                    <Button Text="Előfordulási hely hozzáadása"/>
                 </StackLayout>
             </ScrollView>
         </AbsoluteLayout>
