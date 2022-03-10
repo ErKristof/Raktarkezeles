@@ -4,8 +4,8 @@
              x:Class="Raktarkezeles.Views.DetailsPage"
              NavigationPage.HasBackButton="True">
     <ContentPage.ToolbarItems>
-        <ToolbarItem x:Name="modify" Text="Szerkesztés" Order="Primary"  Priority="0"/>
-        <ToolbarItem x:Name="delete" Text="Törlés" Order="Primary" Priority="1"/>
+        <ToolbarItem x:Name="modify" Text="Szerkesztés" Order="Primary"  Priority="0" Command="{Binding EditPartCommand}"/>
+        <ToolbarItem x:Name="delete" Text="Törlés" Order="Primary" Priority="1" Command="{Binding DeletePartCommand}"/>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <AbsoluteLayout>
@@ -13,7 +13,7 @@
                 <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                     <BoxView BackgroundColor="LightBlue" HeightRequest="250"/>
                     <StackLayout Orientation="Horizontal" Padding="10,15,10,5">
-                        <Label Text="{Binding Part.Name}" FontSize="25" FontAttributes="Bold" TextColor="Black" LineBreakMode="TailTruncation" HorizontalOptions="Start" VerticalOptions="Center"/>
+                        <Label Text="{Binding Part.Name, Mode=TwoWay}" FontSize="25" FontAttributes="Bold" TextColor="Black" LineBreakMode="TailTruncation" HorizontalOptions="Start" VerticalOptions="Center"/>
                         <Label Text="{Binding Part.Manufacturer.Name}" FontSize="17" TextColor="Black" VerticalOptions="Center" HorizontalOptions="EndAndExpand" LineBreakMode="TailTruncation"/>
                     </StackLayout>
                     <StackLayout Orientation="Horizontal">
@@ -33,7 +33,7 @@
                                     <SwipeView VerticalOptions="FillAndExpand">
                                         <SwipeView.RightItems>
                                             <SwipeItems>
-                                                <SwipeItem Text="Törlés" BackgroundColor="Red"/>
+                                                <SwipeItem Text="Törlés" BackgroundColor="Red" Command="{Binding DeleteOccurrenceCommand}" CommandParameter="{Binding Id}"/>
                                             </SwipeItems>
                                         </SwipeView.RightItems>
                                         <Grid Padding="10,0,40,0" BackgroundColor="White">

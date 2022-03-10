@@ -7,16 +7,22 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Raktarkezeles.Models;
 
 namespace Raktarkezeles.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DetailsPage : ContentPage
     {
-        public DetailsPage()
+        public DetailsPage(Part part)
         {
             InitializeComponent();
-            this.BindingContext = new DetailsViewModel(Navigation);
+            this.BindingContext = new DetailsViewModel(Navigation, part);
+        }
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            (BindingContext as DetailsViewModel).OnAppearing();
         }
     }
 }

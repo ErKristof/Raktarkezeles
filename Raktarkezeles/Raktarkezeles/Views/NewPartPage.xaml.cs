@@ -7,16 +7,17 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Raktarkezeles.Models;
 
 namespace Raktarkezeles.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewPartPage : ContentPage
     {
-        public NewPartPage()
+        public NewPartPage(Part part = null)
         {
             InitializeComponent();
-            this.BindingContext = new NewPartViewModel(Navigation);
+            this.BindingContext = new NewPartViewModel(Navigation, part);
         }
     }
 }

@@ -7,10 +7,10 @@
         <AbsoluteLayout>
             <StackLayout Orientation="Vertical" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
                 <StackLayout Orientation="Horizontal">
-                    <SearchBar x:Name="PartSearch" Placeholder="Keresés..." HorizontalOptions="FillAndExpand"/>
-                    <Button x:Name="CameraButton" HorizontalOptions="End" Text="CAMERA"/>
+                    <SearchBar x:Name="PartSearch" Placeholder="Keresés..." HorizontalOptions="StartAndExpand"/>
+                    <Button x:Name="CameraButton" HorizontalOptions="End" Text="CAMERA" WidthRequest="65"/>
                 </StackLayout>
-                <ListView x:Name="PartList" ItemsSource="{Binding Parts}" RowHeight="100" SelectionMode="None" ItemTapped="PartList_ItemTapped">
+                <ListView x:Name="PartList" ItemsSource="{Binding Parts, Mode=TwoWay}" RowHeight="100" SelectionMode="None" ItemTapped="PartList_ItemTapped">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <ViewCell>
