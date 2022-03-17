@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              x:Class="Raktarkezeles.Views.DetailsPage"
              NavigationPage.HasBackButton="True">
     <ContentPage.ToolbarItems>
@@ -8,68 +8,72 @@
         <ToolbarItem x:Name="delete" Text="Törlés" Order="Primary" Priority="1" Command="{Binding DeletePartCommand}"/>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
-        <AbsoluteLayout>
-            <ScrollView AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+        <ListView SelectionMode="None" ItemsSource="{Binding Occurrences}" RowHeight="75" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="White">
+            <ListView.Header>
                 <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                    <BoxView BackgroundColor="LightBlue" HeightRequest="250"/>
-                    <StackLayout Orientation="Horizontal" Padding="10,15,10,5">
-                        <Label Text="{Binding Part.Name, Mode=TwoWay}" FontSize="25" FontAttributes="Bold" TextColor="Black" LineBreakMode="TailTruncation" HorizontalOptions="Start" VerticalOptions="Center"/>
-                        <Label Text="{Binding Part.Manufacturer.Name}" FontSize="17" TextColor="Black" VerticalOptions="Center" HorizontalOptions="EndAndExpand" LineBreakMode="TailTruncation"/>
+                    <BoxView BackgroundColor="LightBlue" HeightRequest="200"/>
+                    <Grid Padding="5,5,5,5" BackgroundColor="White" HorizontalOptions="Fill" VerticalOptions="Fill">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="66*"/>
+                            <ColumnDefinition Width="34*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Text="{Binding Part.Name}" FontSize="26" FontAttributes="Bold" TextColor="Black" LineBreakMode="TailTruncation" Grid.Column="0" VerticalOptions="End" HorizontalOptions="Fill"/>
+                        <Label Text="{Binding Part.Manufacturer.Name}" FontSize="16" TextColor="Black" LineBreakMode="TailTruncation" Grid.Column="1" VerticalOptions="End" HorizontalOptions="Fill" HorizontalTextAlignment="End"/>
+                    </Grid>
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="Fill" VerticalOptions="Fill" Padding="7,0,0,0">
+                        <Label Text="Típus:" FontSize="18"  TextColor="Black" />
+                        <Label Text="{Binding Part.TypeNumber}" FontSize="18" TextColor="Black" />
                     </StackLayout>
-                    <StackLayout Orientation="Horizontal">
-                        <Label Text="Típus:" FontSize="17" Padding="10,0,0,0" TextColor="Black"/>
-                        <Label Text="{Binding Part.TypeNumber}" FontSize="17" Padding="5,0,0,0" TextColor="Black"/>
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="Fill" VerticalOptions="Fill" Padding="7,0,0,0">
+                        <Label Text="Cikkszám:" FontSize="18" TextColor="Black"/>
+                        <Label Text="{Binding Part.ItemNumber}" FontSize="18" TextColor="Black"/>
                     </StackLayout>
-                    <StackLayout Orientation="Horizontal">
-                        <Label Text="Cikkszám:" FontSize="17" Padding="10,0,0,0" TextColor="Black"/>
-                        <Label Text="{Binding Part.ItemNumber}" FontSize="17" Padding="5,0,0,0" TextColor="Black"/>
-                    </StackLayout>
-                    <Label Text="Leírás:" FontSize="17" Padding="10,0,0,0" TextColor="Black"/>
-                    <Label Text="{Binding Part.Description}" Margin="15,0,15,0" FontSize="15"/>
-                    <ListView SelectionMode="None" ItemsSource="{Binding Occurrences}" RowHeight="75" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <ViewCell>
-                                    <SwipeView VerticalOptions="FillAndExpand">
-                                        <SwipeView.RightItems>
-                                            <SwipeItems>
-                                                <SwipeItem Text="Törlés" BackgroundColor="Red" Command="{Binding DeleteOccurrenceCommand}" CommandParameter="{Binding Id}"/>
-                                            </SwipeItems>
-                                        </SwipeView.RightItems>
-                                        <Grid Padding="10,0,40,0" BackgroundColor="White">
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="2*"/>
-                                                <RowDefinition Height="1*"/>
-                                            </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="1*"/>
-                                                <ColumnDefinition Width="1*"/>
-                                                <ColumnDefinition Width="3*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Label Text="{Binding Warehouse.Name}" FontAttributes="Bold" FontSize="19" Padding="10,0,0,0" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" HorizontalOptions="Start" VerticalOptions="Center"/>
-                                            <StackLayout Grid.Column="0" Grid.Row="1" Padding="10,0,0,0" Orientation="Horizontal">
-                                                <Label Text="Polc:" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center" />
-                                                <Label Text="{Binding Rack}" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center" />
-                                            </StackLayout>
-                                            <StackLayout Grid.Column="1" Grid.Row="1" Padding="10,0,0,0" Orientation="Horizontal">
-                                                <Label Text="Szint:" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center" />
-                                                <Label Text="{Binding Shelf}" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center" />
-                                            </StackLayout>
-                                            <StackLayout Grid.Column="2" Grid.RowSpan="2" Orientation="Horizontal" >
-                                                <Button Text="-" WidthRequest="50"  FontSize="30"/>
-                                                <Button Text="{Binding Quantity}" WidthRequest="75"  FontSize="18"/>
-                                                <Button Text="+" WidthRequest="50" FontSize="30"/>
-                                                <Button Text=">" WidthRequest="50" FontSize="30"/>
-                                            </StackLayout>
-                                        </Grid>
-                                    </SwipeView>
-                                </ViewCell>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                    <Button Text="Előfordulási hely hozzáadása"/>
+                    <Label Text="Leírás:" FontSize="18" Padding="7,0,0,0" TextColor="Black" HorizontalOptions="Fill" VerticalOptions="Fill"/>
+                    <Label Text="{Binding Part.Description}" Padding="7,0,7,0" FontSize="16" TextColor="Black"  LineBreakMode="WordWrap" HorizontalOptions="Fill" VerticalOptions="Fill"/>
                 </StackLayout>
-            </ScrollView>
-        </AbsoluteLayout>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <SwipeView BackgroundColor="White" VerticalOptions="Fill" HorizontalOptions="Fill">
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem Text="Törlés" BackgroundColor="Red" />
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+                            <Grid BackgroundColor="White" VerticalOptions="Fill" HorizontalOptions="Fill" Padding="5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="3*"/>
+                                    <RowDefinition Height="2*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="1*"/>
+                                    <ColumnDefinition Width="5*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Text="{Binding Warehouse.Name}" FontAttributes="Bold" FontSize="20" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" TextColor="Black" HorizontalOptions="Start" VerticalOptions="End" LineBreakMode="TailTruncation"/>
+                                <StackLayout Grid.Column="0" Grid.Row="1" Padding="5,0,0,0" Orientation="Horizontal" VerticalOptions="Start">
+                                    <Label Text="{Binding Rack}" FontSize="14" HorizontalOptions="End" VerticalOptions="Center" />
+                                    <Label Text="polc" FontSize="14" HorizontalOptions="Start" VerticalOptions="Center" />
+                                </StackLayout>
+                                <StackLayout Grid.Column="1" Grid.Row="1" Padding="0,0,0,5" Orientation="Horizontal" VerticalOptions="Start">
+                                    <Label Text="{Binding Shelf}" FontSize="14" HorizontalOptions="End" VerticalOptions="Center" />
+                                    <Label Text="szint" FontSize="14" HorizontalOptions="Start" VerticalOptions="Start" />
+                                </StackLayout>
+                                <StackLayout Grid.Column="2" Grid.RowSpan="2" Orientation="Horizontal" HorizontalOptions="End" VerticalOptions="FillAndExpand" Padding="5">
+                                    <Button Text="-" FontSize="30" HorizontalOptions="Fill" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White"/>
+                                    <Button Text="{Binding Quantity}" FontSize="18" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="75" BackgroundColor="White"/>
+                                    <Button Text="+" FontSize="30" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White"/>
+                                    <Button Text=">" FontSize="30" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White"/>
+                                </StackLayout>
+                            </Grid>
+                        </SwipeView>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Footer>
+                <Button Text="+ Előfordulási hely hozzáadaása" />
+            </ListView.Footer>
+        </ListView>
     </ContentPage.Content>
 </ContentPage>

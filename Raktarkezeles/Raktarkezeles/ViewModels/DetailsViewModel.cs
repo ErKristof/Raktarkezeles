@@ -14,6 +14,7 @@ namespace Raktarkezeles.ViewModels
     public class DetailsViewModel : ViewModelBase
     {
         private Part part;
+        
 
         public Part Part 
         { 

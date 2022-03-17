@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Raktarkezeles.Views.QuantityChangePage" 
+             BackgroundColor="#7F000000">
+    <ContentPage.Content>
+        <Frame CornerRadius="10" HorizontalOptions="FillAndExpand" VerticalOptions="Start" BackgroundColor="White" Margin="10,100,10,10" Padding="10,20,10,10">
+            <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                <Label Text="12 db" FontSize="Title" HorizontalOptions="Center"/>
+                <Entry Placeholder="Mennyiség változtatás" />
+                <StackLayout Orientation="Horizontal" Margin="0,10,0,0">
+                    <Button Text="Csökkentés" HorizontalOptions="FillAndExpand"/>
+                    <Button Text="Növelés" HorizontalOptions="FillAndExpand"/>
+                </StackLayout>
+                <Button Text="Mégse"/>
+            </StackLayout>
+        </Frame>
+    </ContentPage.Content>
+</ContentPage>

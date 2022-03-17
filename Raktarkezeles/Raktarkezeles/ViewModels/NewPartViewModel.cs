@@ -67,8 +67,6 @@ namespace Raktarkezeles.ViewModels
             newPart.CategoryId = newPart.Category.Id;
             newPart.ManufacturerId = newPart.Manufacturer.Id;
             newPart.UnitId = newPart.Unit.Id;
-            PartContext.latestId++;
-            newPart.Id = PartContext.latestId;
             PartContext.AddPart(newPart);
             await Navigation.PopAsync(true);
         }
