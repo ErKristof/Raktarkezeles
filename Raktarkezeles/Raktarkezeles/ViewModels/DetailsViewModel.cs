@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using Raktarkezeles.Models;
 using System.ComponentModel;
@@ -29,21 +30,30 @@ namespace Raktarkezeles.ViewModels
             }
         }
 
-        public List<Occurrence> Occurrences
+        public ObservableCollection<Occurrence> Occurrences
         {
             get
             {
-                return (List<Occurrence>)part.Occurrences;
+                return (ObservableCollection<Occurrence>)part.Occurrences;
+            }
+            set
+            {
+                part.Occurrences = value;
+                OnPropertyChanged();
             }
         }
 
         public ICommand EditPartCommand { protected set; get; }
         public ICommand DeletePartCommand { protected set; get; }
+        public ICommand NewOccurrenceCommand { protected set; get; }
+        public ICommand TransferQuantityCommand { protected set; get; }
         public DetailsViewModel(INavigation navigation, Part _part) : base(navigation)
         {
             part = _part;
             EditPartCommand = new Command(EditPartCommandExecute);
             DeletePartCommand = new Command(DeletePartCommandExecute);
+            NewOccurrenceCommand = new Command(NewOccurrenceCommandExecute);
+            TransferQuantityCommand = new Command(TransferQuantityCommandExecute);
         }
 
         public async void EditPartCommandExecute()
@@ -54,6 +64,14 @@ namespace Raktarkezeles.ViewModels
         {
             PartContext.DeletePart(part);
             await Navigation.PopAsync();
+        }
+        public async void NewOccurrenceCommandExecute()
+        {
+            await Navigation.PushModalAsync(new NewOccurrencePage(part));
+        }
+        private async void TransferQuantityCommandExecute()
+        {
+            await Navigation.PushModalAsync(new TransferQuantityPage());
         }
         public override void OnAppearing()
         {

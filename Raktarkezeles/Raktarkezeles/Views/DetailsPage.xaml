@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:viewmodel="clr-namespace:Raktarkezeles.ViewModels"
              x:Class="Raktarkezeles.Views.DetailsPage"
              NavigationPage.HasBackButton="True">
     <ContentPage.ToolbarItems>
@@ -8,7 +9,7 @@
         <ToolbarItem x:Name="delete" Text="Törlés" Order="Primary" Priority="1" Command="{Binding DeletePartCommand}"/>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
-        <ListView SelectionMode="None" ItemsSource="{Binding Occurrences}" RowHeight="75" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="White">
+        <ListView SelectionMode="None" ItemsSource="{Binding Occurrences}" RowHeight="75" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="White" CachingStrategy="RecycleElement">
             <ListView.Header>
                 <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                     <BoxView BackgroundColor="LightBlue" HeightRequest="200"/>
@@ -64,7 +65,7 @@
                                     <Button Text="-" FontSize="30" HorizontalOptions="Fill" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White"/>
                                     <Button Text="{Binding Quantity}" FontSize="18" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="75" BackgroundColor="White"/>
                                     <Button Text="+" FontSize="30" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White"/>
-                                    <Button Text=">" FontSize="30" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White"/>
+                                    <Button Text=">" FontSize="30" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White" Command="{Binding TransferQuantityCommand}"/>
                                 </StackLayout>
                             </Grid>
                         </SwipeView>
@@ -72,7 +73,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
-                <Button Text="+ Előfordulási hely hozzáadaása" />
+                <Button Text="+ Előfordulási hely hozzáadása" Command="{Binding NewOccurrenceCommand}"/>
             </ListView.Footer>
         </ListView>
     </ContentPage.Content>

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Raktarkezeles.ViewModels;
+using Raktarkezeles.Models;
 
 namespace Raktarkezeles.Views
 {
@@ -15,6 +17,7 @@ namespace Raktarkezeles.Views
         public TransferQuantityPage()
         {
             InitializeComponent();
+            this.BindingContext = new TransferQuantityViewModel(Navigation);
         }
     }
 }
