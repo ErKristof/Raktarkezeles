@@ -45,7 +45,7 @@ namespace Raktarkezeles.ViewModels
         }
         public ICommand SaveOccurrenceCommand { protected set; get; }
         public ICommand CancelOccurrenceCommand { protected set; get; }
-        public NewOccurrenceViewModel(INavigation navigation, Part part) : base(navigation)
+        public NewOccurrenceViewModel(Part part)
         {
             this.part = part;
             warehouses = PartContext.GetWarehouses();
@@ -64,11 +64,11 @@ namespace Raktarkezeles.ViewModels
             occurrence.Shelf = int.Parse(shelf);
             occurrence.Quantity = int.Parse(quantity);
             PartContext.AddOccurrence(occurrence);
-            await Navigation.PopModalAsync();
+            await Application.Current.MainPage.Navigation.PopModalAsync();
         }
         private async void CancelOccurrenceCommandExecute()
         {
-            await Navigation.PopModalAsync();
+            await Application.Current.MainPage.Navigation.PopModalAsync();
         }
     }
 }

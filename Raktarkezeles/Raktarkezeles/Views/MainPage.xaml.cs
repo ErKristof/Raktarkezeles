@@ -17,13 +17,6 @@ namespace Raktarkezeles.Views
         public MainPage()
         {
             InitializeComponent();
-            BindingContext = new MainViewModel(Navigation);
-        }
-
-        private void PartList_ItemTapped(object sender, ItemTappedEventArgs e)
-        {
-            
-            Navigation.PushAsync(new DetailsPage((Part)e.Item));
         }
         protected override void OnAppearing()
         {

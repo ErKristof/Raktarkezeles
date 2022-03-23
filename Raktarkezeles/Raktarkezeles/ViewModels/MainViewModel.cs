@@ -15,7 +15,6 @@ namespace Raktarkezeles.ViewModels
     public class MainViewModel : ViewModelBase
     {
         private ObservableCollection<Part> parts = PartContext.GetParts();
-
         public ObservableCollection<Part> Parts
         {
             get
@@ -25,26 +24,65 @@ namespace Raktarkezeles.ViewModels
             set
             {
                 parts = value;
-                OnPropertyChanged(nameof(Parts));
+                OnPropertyChanged();
+            }
+        }
+        private Part selectedPart;
+        public Part SelectedPart
+        {
+            get
+            {
+                return selectedPart;
+            }
+            set
+            {
+                selectedPart = value;
+                OnPropertyChanged();
             }
         }
 
         public ICommand GoToNewPartCommand { protected set; get; }
+        public ICommand GoToDetailsCommand { protected set; get; }
 
-        public MainViewModel(INavigation navigation) : base(navigation)
+        public MainViewModel()
         {
-            
+            GoToDetailsCommand = new Command(GoToDetailsCommandExecute);
             GoToNewPartCommand = new Command(GoToNewPartCommandExecute);
+        }
+        private async void GoToDetailsCommandExecute()
+        {
+            if (selectedPart != null)
+            {
+                DetailsViewModel detailsVM = new DetailsViewModel();
+                detailsVM.Part = selectedPart;
+                DetailsPage detailsPage = new DetailsPage();
+                detailsPage.BindingContext = detailsVM;
+                await Application.Current.MainPage.Navigation.PushAsync(detailsPage);
+                SelectedPart = null;
+            }
         }
         private async void GoToNewPartCommandExecute()
         {
-            await Navigation.PushAsync(new NewPartPage(), true);
+            NewPartViewModel newVM = new NewPartViewModel();
+            NewPartPage newPage = new NewPartPage();
+            newPage.BindingContext = newVM;
+            await Application.Current.MainPage.Navigation.PushAsync(newPage);
         }
 
         public override void OnAppearing()
         {
             base.OnAppearing();
             Parts = PartContext.GetParts();
+            foreach(Part p in Parts)
+            {
+                int sum = 0;
+                foreach(Occurrence o in p.Occurrences)
+                {
+                    sum += o.Quantity;
+                }
+                p.Quantity = sum;
+            }
+            OnPropertyChanged(nameof(Parts));
         }
     }
 }

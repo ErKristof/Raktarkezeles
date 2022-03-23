@@ -17,7 +17,7 @@ namespace Raktarkezeles.Views
         public NewPartPage(Part part = null)
         {
             InitializeComponent();
-            this.BindingContext = new NewPartViewModel(Navigation, part);
+            this.BindingContext = new NewPartViewModel(part);
         }
     }
 }

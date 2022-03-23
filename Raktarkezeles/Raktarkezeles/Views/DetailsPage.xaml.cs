@@ -14,10 +14,9 @@ namespace Raktarkezeles.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class DetailsPage : ContentPage
     {
-        public DetailsPage(Part part)
+        public DetailsPage()
         {
             InitializeComponent();
-            this.BindingContext = new DetailsViewModel(Navigation, part);
         }
         protected override void OnAppearing()
         {

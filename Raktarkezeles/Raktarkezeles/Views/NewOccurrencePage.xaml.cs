@@ -17,7 +17,7 @@ namespace Raktarkezeles.Views
         public NewOccurrencePage(Part part)
         {
             InitializeComponent();
-            this.BindingContext = new NewOccurrenceViewModel(Navigation, part);
+            this.BindingContext = new NewOccurrenceViewModel(part);
         }
     }
 }

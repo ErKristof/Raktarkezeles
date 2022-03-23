@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using Xamarin.Forms;
 using Raktarkezeles.Models;
@@ -10,11 +11,12 @@ namespace Raktarkezeles.ViewModels
 {
     public class TransferQuantityViewModel : ViewModelBase
     {
-        private Occurrence occurrence = new Occurrence();
-        private List<Occurrence> occurrences;
-        public List<Occurrence> Occurrences
+        public Occurrence FromOccurrence { get; set; }
+        private ObservableCollection<Occurrence> occurrences;
+        public ObservableCollection<Occurrence> Occurrences
         {
             get { return occurrences; }
+            set { occurrences = value; OnPropertyChanged();}
         }
         private Occurrence pickedOccurrence;
         public Occurrence PickedOccurrence
@@ -28,23 +30,22 @@ namespace Raktarkezeles.ViewModels
             get { return quantity; }
             set { quantity = value; OnPropertyChanged(); }
         }
+        
         public ICommand SaveTransferCommand { protected set; get; }
         public ICommand CancelTransferCommand { protected set; get; }
-        public TransferQuantityViewModel(INavigation navigation) : base(navigation)
+        public TransferQuantityViewModel()
         {
-            //this.occurrence = occurrence;
-            //occurrences = (List<Occurrence>)occurrence.Part.Occurrences;
             SaveTransferCommand = new Command(SaveTransferCommandExecute);
             CancelTransferCommand = new Command(CancelTransferCommandExecute);
         }
         private async void SaveTransferCommandExecute()
         {
-            PartContext.TransferQuantity(occurrence, pickedOccurrence, int.Parse(quantity));
-            await Navigation.PopModalAsync();
+            PartContext.TransferQuantity(FromOccurrence.Id, pickedOccurrence.Id, int.Parse(quantity));
+            await Application.Current.MainPage.Navigation.PopModalAsync();
         }
         private async void CancelTransferCommandExecute()
         {
-            await Navigation.PopModalAsync();
+            await Application.Current.MainPage.Navigation.PopModalAsync();
         }
 
     }

@@ -13,8 +13,8 @@ namespace Raktarkezeles.DAL
         public static List<Unit> units = new List<Unit>();
         public static List<Warehouse> warehouses = new List<Warehouse>();
         public static ObservableCollection<Part> parts = new ObservableCollection<Part>();
-        public static int latestPartId = 0;
-        public static int latestOccurrenceId = 0;
+        public static int latestPartId = 1;
+        public static int latestOccurrenceId = 2;
 
         static  PartContext()
         {
@@ -116,22 +116,32 @@ namespace Raktarkezeles.DAL
                 }
             }
         }
-        public static void TransferQuantity(Occurrence from, Occurrence to, int quantity)
+        public static void TransferQuantity(int from, int to, int quantity)
         {
-            foreach(Part part in parts)
+            foreach (Part part in parts)
             {
-                if(from.PartId == part.Id)
+                foreach (Occurrence occurrence in part.Occurrences)
                 {
-                    foreach(Occurrence occurrence in part.Occurrences)
+                    if (occurrence.Id == from)
                     {
-                        if(from.Id == occurrence.Id)
-                        {
-                            occurrence.Quantity -= quantity;
-                        }
-                        if(to.Id == occurrence.Id)
-                        {
-                            occurrence.Quantity += quantity;
-                        }
+                        occurrence.Quantity -= quantity;
+                    }
+                    if (occurrence.Id == to)
+                    {
+                        occurrence.Quantity += quantity;
+                    }
+                }
+            }
+        }
+        public static void ChangeQuantity(int id, int quantity)
+        {
+            foreach (Part part in parts)
+            {
+                foreach (Occurrence occurrence in part.Occurrences)
+                {
+                    if(occurrence.Id == id)
+                    {
+                        occurrence.Quantity += quantity;
                     }
                 }
             }

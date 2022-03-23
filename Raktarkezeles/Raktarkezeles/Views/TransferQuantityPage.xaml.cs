@@ -17,7 +17,6 @@ namespace Raktarkezeles.Views
         public TransferQuantityPage()
         {
             InitializeComponent();
-            this.BindingContext = new TransferQuantityViewModel(Navigation);
         }
     }
 }

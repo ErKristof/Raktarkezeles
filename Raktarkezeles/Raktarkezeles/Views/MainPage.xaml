@@ -1,8 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:viewmodels="clr-namespace:Raktarkezeles.ViewModels"
+             xmlns:models="clr-namespace:Raktarkezeles.Models"
+             x:DataType="viewmodels:MainViewModel"
              x:Class="Raktarkezeles.Views.MainPage"
              Title="Raktárkezelés" NavigationPage.HasNavigationBar="False">
+    <ContentPage.BindingContext>
+        <viewmodels:MainViewModel/>
+    </ContentPage.BindingContext>
+    <ContentPage.Resources>
+        <Style TargetType="Grid">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal"/>
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="White"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+    </ContentPage.Resources>
     <ContentPage.Content>
         <AbsoluteLayout>
             <StackLayout Orientation="Vertical" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
@@ -10,31 +32,29 @@
                     <SearchBar x:Name="PartSearch" Placeholder="Keresés..." HorizontalOptions="StartAndExpand"/>
                     <Button x:Name="CameraButton" HorizontalOptions="End" Text="CAMERA" WidthRequest="65"/>
                 </StackLayout>
-                <ListView x:Name="PartList" ItemsSource="{Binding Parts}" RowHeight="100" SelectionMode="None" ItemTapped="PartList_ItemTapped">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <ViewCell>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="10*"/>
-                                        <ColumnDefinition Width="25*"/>
-                                        <ColumnDefinition Width="15*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <BoxView Grid.Column="0" Color="LightBlue"/>
-                                    <StackLayout Grid.Column="1" Orientation="Vertical">
-                                        <Label Text="{Binding Name}" FontAttributes="Bold" FontSize="Large" LineBreakMode="TailTruncation" TextColor="Black"/>
-                                        <Label Text="{Binding Manufacturer.Name}" FontSize="16" TextColor="Black"/>
-                                        <Label Text="{Binding Category.Name}" FontSize="16" TextColor="Black"/>
-                                    </StackLayout>
-                                    <StackLayout Grid.Column="2" Orientation="Horizontal" HorizontalOptions="End" Padding="10,0,10,0">
-                                        <Label Text="{Binding Quantity}" FontSize="Large" VerticalOptions="Center" TextColor="Black"/>
-                                        <Label Text="{Binding Unit.ShortName}" FontSize="Medium" VerticalOptions="Center" TextColor="Black"/>
-                                    </StackLayout>
-                                </Grid>
-                            </ViewCell>
+                <CollectionView ItemsSource="{Binding Parts}" SelectedItem="{Binding SelectedPart}" SelectionChangedCommand="{Binding GoToDetailsCommand}" SelectionMode="Single" Background="White">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Part">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="10*"/>
+                                    <ColumnDefinition Width="25*"/>
+                                    <ColumnDefinition Width="15*"/>
+                                </Grid.ColumnDefinitions>
+                                <BoxView Grid.Column="0" Color="LightBlue"/>
+                                <StackLayout Grid.Column="1" Orientation="Vertical">
+                                    <Label Text="{Binding Name}" FontAttributes="Bold" FontSize="Large" LineBreakMode="TailTruncation" TextColor="Black"/>
+                                    <Label Text="{Binding Manufacturer.Name}" FontSize="16" TextColor="Black"/>
+                                    <Label Text="{Binding Category.Name}" FontSize="16" TextColor="Black"/>
+                                </StackLayout>
+                                <StackLayout Grid.Column="2" Orientation="Horizontal" HorizontalOptions="End" Padding="10,0,10,0">
+                                    <Label Text="{Binding Quantity}" FontSize="Large" VerticalOptions="Center" TextColor="Black"/>
+                                    <Label Text="{Binding Unit.ShortName}" FontSize="Medium" VerticalOptions="Center" TextColor="Black"/>
+                                </StackLayout>
+                            </Grid>
                         </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
             </StackLayout>
             <Button CornerRadius="40" Padding="0,0,0,0" BackgroundColor="LightBlue" Text="+" FontSize="48" TextColor="White" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds=".95,.95,80,80" Command="{Binding GoToNewPartCommand}"/>
         </AbsoluteLayout>

@@ -7,7 +7,7 @@ namespace Raktarkezeles.ViewModels
 {
     public class QuantityChangeViewModel : ViewModelBase
     {
-        public QuantityChangeViewModel(INavigation navigation) : base(navigation)
+        public QuantityChangeViewModel()
         {
 
         }

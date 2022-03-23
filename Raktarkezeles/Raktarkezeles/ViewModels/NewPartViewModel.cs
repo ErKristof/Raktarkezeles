@@ -46,12 +46,12 @@ namespace Raktarkezeles.ViewModels
             get { return units; }
         }
 
-        public NewPartViewModel(INavigation navigation, Part _newPart = null) : base(navigation)
+        public NewPartViewModel(Part _newPart = null)
         {
             manufacturers = PartContext.GetManufacturers();
             categories = PartContext.GetCategories();
             units = PartContext.GetUnits();
-            if(_newPart != null)
+            if (_newPart != null)
             {
                 newPart = _newPart;
                 AddPartCommand = new Command(SavePartCommandExecute);
@@ -68,8 +68,9 @@ namespace Raktarkezeles.ViewModels
             newPart.ManufacturerId = newPart.Manufacturer.Id;
             newPart.UnitId = newPart.Unit.Id;
             newPart.Occurrences = new ObservableCollection<Occurrence>();
+            newPart.Quantity = 0;
             PartContext.AddPart(newPart);
-            await Navigation.PopAsync(true);
+            await Application.Current.MainPage.Navigation.PopAsync();
         }
 
         private async void SavePartCommandExecute()
@@ -78,7 +79,7 @@ namespace Raktarkezeles.ViewModels
             newPart.ManufacturerId = newPart.Manufacturer.Id;
             newPart.UnitId = newPart.Unit.Id;
             PartContext.EditPart(newPart);
-            await Navigation.PopAsync(true);
+            await Application.Current.MainPage.Navigation.PopAsync();
         }
 
     }
