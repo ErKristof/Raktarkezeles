@@ -41,7 +41,7 @@
                     <SwipeView BackgroundColor="White" VerticalOptions="Fill" HorizontalOptions="Fill">
                         <SwipeView.RightItems>
                             <SwipeItems>
-                                <SwipeItem Text="Törlés" BackgroundColor="Red" />
+                                <SwipeItem Text="Törlés" BackgroundColor="Red" Command="{Binding BindingContext.DeleteOccurrenceCommnad, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
                             </SwipeItems>
                         </SwipeView.RightItems>
                         <Grid BackgroundColor="White" VerticalOptions="Fill" HorizontalOptions="Fill" Padding="5">
@@ -55,17 +55,11 @@
                                 <ColumnDefinition Width="5*"/>
                             </Grid.ColumnDefinitions>
                             <Label Text="{Binding Warehouse.Name}" FontAttributes="Bold" FontSize="20" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" TextColor="Black" HorizontalOptions="Start" VerticalOptions="End" LineBreakMode="TailTruncation"/>
-                            <StackLayout Grid.Column="0" Grid.Row="1" Padding="5,0,0,0" Orientation="Horizontal" VerticalOptions="Start">
-                                <Label Text="{Binding Rack}" FontSize="14" HorizontalOptions="End" VerticalOptions="Center" />
-                                <Label Text="polc" FontSize="14" HorizontalOptions="Start" VerticalOptions="Center" />
-                            </StackLayout>
-                            <StackLayout Grid.Column="1" Grid.Row="1" Padding="0,0,0,5" Orientation="Horizontal" VerticalOptions="Start">
-                                <Label Text="{Binding Shelf}" FontSize="14" HorizontalOptions="End" VerticalOptions="Center" />
-                                <Label Text="szint" FontSize="14" HorizontalOptions="Start" VerticalOptions="Start" />
-                            </StackLayout>
+                            <Label Padding="0,0,0,5" Grid.Column="0" Grid.Row="1" Text="{Binding Rack, StringFormat='{0} polc'}" FontSize="14" HorizontalOptions="End" VerticalOptions="Center" LineBreakMode="TailTruncation"/>
+                            <Label Padding="0,0,0,5" Grid.Column="1" Grid.Row="1" Text="{Binding Shelf, StringFormat='{0} szint'}" FontSize="14" HorizontalOptions="End" VerticalOptions="Center" LineBreakMode="TailTruncation"/>
                             <StackLayout Grid.Column="2" Grid.RowSpan="2" Orientation="Horizontal" HorizontalOptions="End" VerticalOptions="FillAndExpand" Padding="5">
                                 <Button Text="-" FontSize="30" HorizontalOptions="Fill" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White" Command="{Binding BindingContext.MinusOneCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
-                                <Button Text="{Binding Quantity}" FontSize="18" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="75" BackgroundColor="White" Command="{Binding BindingContext.NewOccurrenceCommand, Source={x:Reference Name=MyPage}}"/>
+                                <Button Text="{Binding Quantity}"  FontSize="18" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="75" BackgroundColor="White" Command="{Binding BindingContext.ChangeQuantityCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
                                 <Button Text="+" FontSize="30" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White" Command="{Binding BindingContext.PlusOneCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
                                 <Button Text=">" FontSize="30" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White" Command="{Binding BindingContext.TransferQuantityCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
                             </StackLayout>

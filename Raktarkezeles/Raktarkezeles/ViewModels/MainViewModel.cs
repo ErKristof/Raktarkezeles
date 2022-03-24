@@ -9,10 +9,11 @@ using Raktarkezeles.Views;
 using Xamarin.Forms;
 using System.Windows.Input;
 using Raktarkezeles.DAL;
+using Raktarkezeles.MVVM;
 
 namespace Raktarkezeles.ViewModels
 {
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : BindableBase
     {
         private ObservableCollection<Part> parts = PartContext.GetParts();
         public ObservableCollection<Part> Parts
@@ -53,8 +54,7 @@ namespace Raktarkezeles.ViewModels
         {
             if (selectedPart != null)
             {
-                DetailsViewModel detailsVM = new DetailsViewModel();
-                detailsVM.Part = selectedPart;
+                DetailsViewModel detailsVM = new DetailsViewModel(selectedPart.Id);
                 DetailsPage detailsPage = new DetailsPage();
                 detailsPage.BindingContext = detailsVM;
                 await Application.Current.MainPage.Navigation.PushAsync(detailsPage);
@@ -73,16 +73,15 @@ namespace Raktarkezeles.ViewModels
         {
             base.OnAppearing();
             Parts = PartContext.GetParts();
-            foreach(Part p in Parts)
+            foreach (Part p in Parts)
             {
                 int sum = 0;
-                foreach(Occurrence o in p.Occurrences)
+                foreach (Occurrence o in p.Occurrences)
                 {
                     sum += o.Quantity;
                 }
                 p.Quantity = sum;
             }
-            OnPropertyChanged(nameof(Parts));
         }
     }
 }

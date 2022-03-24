@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Raktarkezeles.MVVM;
 
 namespace Raktarkezeles.Models
 {
-    public class Occurrence
+    public class Occurrence : BindableBase
     {
         public int Id { get; set; }
         public int PartId { get; set; }
@@ -13,6 +14,21 @@ namespace Raktarkezeles.Models
         public Warehouse Warehouse { get; set; }
         public int Rack { get; set; }
         public int Shelf { get; set; }
-        public int Quantity { get; set; }
+        private int quantity;
+        public int Quantity
+        {
+            get
+            {
+                return quantity;
+            }
+            set
+            {
+                if (quantity != value)
+                {
+                    quantity = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
     }
 }

@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using Raktarkezeles.MVVM;
 
 namespace Raktarkezeles.Models
 {
-    public class Part
+    public class Part : BindableBase
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -19,7 +20,21 @@ namespace Raktarkezeles.Models
         public Unit Unit { get; set; }
         public string Description { get; set; }
         public byte[] Image { get; set; }
-        public int Quantity { get; set; }
+        private int quantity;
+        public int Quantity {
+            get
+            {
+                return quantity;
+            }
+            set
+            {
+                if(quantity != value)
+                {
+                    quantity = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public ICollection<Occurrence> Occurrences { get; set; }
     }
 }

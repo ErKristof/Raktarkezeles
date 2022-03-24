@@ -5,7 +5,8 @@
              xmlns:models="clr-namespace:Raktarkezeles.Models"
              x:DataType="viewmodels:MainViewModel"
              x:Class="Raktarkezeles.Views.MainPage"
-             Title="Raktárkezelés" NavigationPage.HasNavigationBar="False">
+             Title="Raktárkezelés" NavigationPage.HasNavigationBar="False"
+             BackgroundColor="White">
     <ContentPage.BindingContext>
         <viewmodels:MainViewModel/>
     </ContentPage.BindingContext>

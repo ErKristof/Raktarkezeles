@@ -8,10 +8,11 @@ using System.Collections.ObjectModel;
 using Raktarkezeles.DAL;
 using Xamarin.Forms;
 using System.Windows.Input;
+using Raktarkezeles.MVVM;
 
 namespace Raktarkezeles.ViewModels
 {
-    public class NewPartViewModel : ViewModelBase
+    public class NewPartViewModel : BindableBase
     {
         private Part newPart = new Part();
         public Part NewPart
@@ -46,14 +47,14 @@ namespace Raktarkezeles.ViewModels
             get { return units; }
         }
 
-        public NewPartViewModel(Part _newPart = null)
+        public NewPartViewModel(Part newPart = null)
         {
             manufacturers = PartContext.GetManufacturers();
             categories = PartContext.GetCategories();
             units = PartContext.GetUnits();
-            if (_newPart != null)
+            if (newPart != null)
             {
-                newPart = _newPart;
+                this.newPart = newPart;
                 AddPartCommand = new Command(SavePartCommandExecute);
             }
             else

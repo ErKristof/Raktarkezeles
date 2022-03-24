@@ -5,10 +5,11 @@ using Xamarin.Forms;
 using Raktarkezeles.Models;
 using Raktarkezeles.DAL;
 using System.Windows.Input;
+using Raktarkezeles.MVVM;
 
 namespace Raktarkezeles.ViewModels
 {
-    public class NewOccurrenceViewModel : ViewModelBase
+    public class NewOccurrenceViewModel : BindableBase
     {
         private Part part;
         private List<Warehouse> warehouses;
@@ -45,9 +46,9 @@ namespace Raktarkezeles.ViewModels
         }
         public ICommand SaveOccurrenceCommand { protected set; get; }
         public ICommand CancelOccurrenceCommand { protected set; get; }
-        public NewOccurrenceViewModel(Part part)
+        public NewOccurrenceViewModel(int partId)
         {
-            this.part = part;
+            part = PartContext.GetPart(partId);
             warehouses = PartContext.GetWarehouses();
             SaveOccurrenceCommand = new Command(SaveOccurrenceCommandExecute);
             CancelOccurrenceCommand = new Command(CancelOccurrenceCommandExecute);

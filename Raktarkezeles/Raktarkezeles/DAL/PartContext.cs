@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using Raktarkezeles.Models;
+using System.Linq;
 
 namespace Raktarkezeles.DAL
 {
@@ -13,8 +14,8 @@ namespace Raktarkezeles.DAL
         public static List<Unit> units = new List<Unit>();
         public static List<Warehouse> warehouses = new List<Warehouse>();
         public static ObservableCollection<Part> parts = new ObservableCollection<Part>();
-        public static int latestPartId = 1;
-        public static int latestOccurrenceId = 2;
+        public static int latestPartId = 2;
+        public static int latestOccurrenceId = 3;
 
         static  PartContext()
         {
@@ -33,7 +34,7 @@ namespace Raktarkezeles.DAL
             warehouses.Add(new Warehouse() { Id = 0, Name = "Iroda" });
             warehouses.Add(new Warehouse() { Id = 1, Name = "Raktár" });
 
-            parts.Add(new Part() { Id = 0, ManufacturerId = 1, Manufacturer = manufacturers[1], CategoryId = 0, Category = categories[0], UnitId = 0, Unit = units[0], Name = "Sorkapocs", TypeNumber = "8WA1011-1DF11", ItemNumber = "8WA1011-1DF11", Quantity = 32, Description = "Through-type terminal thermoplast Screw terminal on both sides Single terminal, 6mm, Sz. 2.5 " });
+            parts.Add(new Part() { Id = 0, ManufacturerId = 1, Manufacturer = manufacturers[1], CategoryId = 0, Category = categories[0], UnitId = 0, Unit = units[0], Name = "Sorkapocs", TypeNumber = "8WA1011-1DF11", ItemNumber = "8WA1011-1DF11", Quantity = 0, Description = "Through-type terminal thermoplast Screw terminal on both sides Single terminal, 6mm, Sz. 2.5 " });
             parts.Add(new Part() { Id = 1, ManufacturerId = 0, Manufacturer = manufacturers[0], CategoryId = 1, Category = categories[1], UnitId = 1, Unit = units[1], Name = "Sorkapocs véglap", TypeNumber = "8WA1011-1DF13", ItemNumber = "8WA1011-1DF13", Quantity = 0, Description = "" });
 
             parts[0].Occurrences = new ObservableCollection<Occurrence>();
@@ -94,7 +95,10 @@ namespace Raktarkezeles.DAL
         }
         public static void DeleteOccurrence(int id)
         {
-            
+            foreach(Part p in parts)
+            {
+                p.Occurrences.Remove(p.Occurrences.Where(o => o.Id == id).FirstOrDefault());
+            }
         }
         public static void DeletePart(Part part)
         {
@@ -146,6 +150,21 @@ namespace Raktarkezeles.DAL
                 }
             }
         }
-        
+        public static Occurrence GetOccurrence(int id)
+        {
+            foreach(Part p in parts)
+            {
+                Occurrence occ = p.Occurrences.Where(o => o.Id == id).FirstOrDefault();
+                if(occ != null)
+                {
+                    return occ;
+                }
+            }
+            return null;
+        }
+        public static ICollection<Occurrence> GetOccurrences(int id)
+        {
+            return parts.Where(p => p.Id == id).FirstOrDefault().Occurrences;
+        }
     }
 }

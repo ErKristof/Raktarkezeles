@@ -6,10 +6,11 @@ using Xamarin.Forms;
 using Raktarkezeles.Models;
 using Raktarkezeles.DAL;
 using System.Windows.Input;
+using Raktarkezeles.MVVM;
 
 namespace Raktarkezeles.ViewModels
 {
-    public class TransferQuantityViewModel : ViewModelBase
+    public class TransferQuantityViewModel : BindableBase
     {
         public Occurrence FromOccurrence { get; set; }
         private ObservableCollection<Occurrence> occurrences;
@@ -33,8 +34,10 @@ namespace Raktarkezeles.ViewModels
         
         public ICommand SaveTransferCommand { protected set; get; }
         public ICommand CancelTransferCommand { protected set; get; }
-        public TransferQuantityViewModel()
+        public TransferQuantityViewModel(int occurrenceId)
         {
+            FromOccurrence = PartContext.GetOccurrence(occurrenceId);
+            Occurrences = (ObservableCollection<Occurrence>)PartContext.GetOccurrences(FromOccurrence.PartId);
             SaveTransferCommand = new Command(SaveTransferCommandExecute);
             CancelTransferCommand = new Command(CancelTransferCommandExecute);
         }

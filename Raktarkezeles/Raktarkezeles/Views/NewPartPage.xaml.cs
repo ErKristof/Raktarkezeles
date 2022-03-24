@@ -14,10 +14,9 @@ namespace Raktarkezeles.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewPartPage : ContentPage
     {
-        public NewPartPage(Part part = null)
+        public NewPartPage()
         {
             InitializeComponent();
-            this.BindingContext = new NewPartViewModel(part);
         }
     }
 }

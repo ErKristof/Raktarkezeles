@@ -9,11 +9,12 @@ using Xamarin.Forms;
 using System.Windows.Input;
 using Raktarkezeles.Views;
 using Raktarkezeles.DAL;
+using Raktarkezeles.MVVM;
 using System.Linq;
 
 namespace Raktarkezeles.ViewModels
 {
-    public class DetailsViewModel : ViewModelBase
+    public class DetailsViewModel : BindableBase
     {
         private Part part;
         public Part Part
@@ -32,19 +33,7 @@ namespace Raktarkezeles.ViewModels
         {
             get
             {
-                if (part != null)
-                { 
-                    return (ObservableCollection<Occurrence>)part.Occurrences;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            set
-            {
-                part.Occurrences = value;
-                OnPropertyChanged(nameof(Occurrences));
+                return part != null ? (ObservableCollection<Occurrence>)part.Occurrences : null;
             }
         }
 
@@ -54,18 +43,26 @@ namespace Raktarkezeles.ViewModels
         public ICommand TransferQuantityCommand { protected set; get; }
         public ICommand MinusOneCommand { protected set; get; }
         public ICommand PlusOneCommand { protected set; get; }
-        public DetailsViewModel()
+        public ICommand ChangeQuantityCommand { private set; get; }
+        public ICommand DeleteOccurrenceCommnad { protected set; get; }
+        public DetailsViewModel(int partId)
         {
+            Part = PartContext.GetPart(partId);
             EditPartCommand = new Command(EditPartCommandExecute);
             DeletePartCommand = new Command(DeletePartCommandExecute);
             NewOccurrenceCommand = new Command(NewOccurrenceCommandExecute);
             TransferQuantityCommand = new Command<int>(TransferQuantityCommandExecute);
             MinusOneCommand = new Command<int>(MinusOneCommandExecute);
             PlusOneCommand = new Command<int>(PlusOneCommandExecute);
+            DeleteOccurrenceCommnad = new Command<int>(DeleteOccurrenceCommandExecute);
+            ChangeQuantityCommand = new Command<int>(ChangeQuantityCommandExecute);
         }
         private async void EditPartCommandExecute()
         {
-            await Application.Current.MainPage.Navigation.PushAsync(new NewPartPage(part), true);
+            NewPartViewModel newPartVM = new NewPartViewModel(part);
+            NewPartPage newPartPage = new NewPartPage();
+            newPartPage.BindingContext = newPartVM;
+            await Application.Current.MainPage.Navigation.PushAsync(newPartPage);
         }
         private async void DeletePartCommandExecute()
         {
@@ -74,30 +71,41 @@ namespace Raktarkezeles.ViewModels
         }
         private async void NewOccurrenceCommandExecute()
         {
-            await Application.Current.MainPage.Navigation.PushModalAsync(new NewOccurrencePage(part));
+            NewOccurrenceViewModel newOccurrenceVM = new NewOccurrenceViewModel(part.Id);
+            NewOccurrencePage newOccurrencePage = new NewOccurrencePage();
+            newOccurrencePage.BindingContext = newOccurrenceVM;
+            await Application.Current.MainPage.Navigation.PushModalAsync(newOccurrencePage);
         }
         private async void TransferQuantityCommandExecute(int id)
         {
-            TransferQuantityViewModel transferQuantityVM = new TransferQuantityViewModel();
-            transferQuantityVM.FromOccurrence = Occurrences.Where(o => o.Id == id).FirstOrDefault();
-            transferQuantityVM.Occurrences = Occurrences;
+            TransferQuantityViewModel transferQuantityVM = new TransferQuantityViewModel(Occurrences.FirstOrDefault(o => o.Id == id).Id);
             TransferQuantityPage transferQuantityPage = new TransferQuantityPage();
             transferQuantityPage.BindingContext = transferQuantityVM;
             await Application.Current.MainPage.Navigation.PushModalAsync(transferQuantityPage);
-            OnPropertyChanged(nameof(Occurrences));
+        }
+        private async void ChangeQuantityCommandExecute(int id)
+        {
+            QuantityChangeViewModel quantityChangeVM = new QuantityChangeViewModel(Occurrences.FirstOrDefault(o => o.Id == id).Id);
+            QuantityChangePage quantityChangePage = new QuantityChangePage();
+            quantityChangePage.BindingContext = quantityChangeVM;
+            await Application.Current.MainPage.Navigation.PushModalAsync(quantityChangePage);
         }
         private void MinusOneCommandExecute(int id)
         {
             PartContext.ChangeQuantity(id, -1);
-            //Occurrences.Where(o => o.Id == id).FirstOrDefault().Quantity--;
         }
         private void PlusOneCommandExecute(int id)
         {
             PartContext.ChangeQuantity(id, 1);
         }
+        private void DeleteOccurrenceCommandExecute(int id)
+        {
+            PartContext.DeleteOccurrence(id);
+        }
         public override void OnAppearing()
         {
             base.OnAppearing();
+            Part = PartContext.GetPart(part.Id);
         }
     }
 }

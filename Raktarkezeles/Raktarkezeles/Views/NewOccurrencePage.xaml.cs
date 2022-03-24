@@ -14,10 +14,9 @@ namespace Raktarkezeles.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewOccurrencePage : ContentPage
     {
-        public NewOccurrencePage(Part part)
+        public NewOccurrencePage()
         {
             InitializeComponent();
-            this.BindingContext = new NewOccurrenceViewModel(part);
         }
     }
 }
