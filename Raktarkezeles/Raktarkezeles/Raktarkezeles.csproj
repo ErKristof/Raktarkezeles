@@ -11,6 +11,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\barcode.png" />
+    <None Remove="Images\delete.png" />
+    <None Remove="Images\edit.png" />
+    <None Remove="Images\placeholder.png" />
+    <None Remove="Images\placeholder_edit.png" />
+    <None Remove="Images\placeholder_small.png" />
+    <None Remove="Images\transfer.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Images\barcode.png" />
+    <EmbeddedResource Include="Images\delete.png" />
+    <EmbeddedResource Include="Images\edit.png" />
+    <EmbeddedResource Include="Images\placeholder.png" />
+    <EmbeddedResource Include="Images\placeholder_edit.png" />
+    <EmbeddedResource Include="Images\placeholder_small.png" />
+    <EmbeddedResource Include="Images\transfer.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
   </ItemGroup>

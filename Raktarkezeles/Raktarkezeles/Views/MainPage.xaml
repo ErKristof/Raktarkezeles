@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              xmlns:viewmodels="clr-namespace:Raktarkezeles.ViewModels"
              xmlns:models="clr-namespace:Raktarkezeles.Models"
+             xmlns:mvvm="clr-namespace:Raktarkezeles.MVVM"
+             xmlns:local="clr-namespace:Raktarkezeles"
              x:DataType="viewmodels:MainViewModel"
              x:Class="Raktarkezeles.Views.MainPage"
              Title="Raktárkezelés" NavigationPage.HasNavigationBar="False"
@@ -25,13 +27,16 @@
                 </VisualStateGroupList>
             </Setter>
         </Style>
+        <ResourceDictionary>
+            <mvvm:ByteToImageConverter x:Key="byteToImage"/>
+        </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
         <AbsoluteLayout>
             <StackLayout Orientation="Vertical" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
-                <StackLayout Orientation="Horizontal">
-                    <SearchBar x:Name="PartSearch" Placeholder="Keresés..." HorizontalOptions="StartAndExpand"/>
-                    <Button x:Name="CameraButton" HorizontalOptions="End" Text="CAMERA" WidthRequest="65"/>
+                <StackLayout Orientation="Horizontal" Padding="5,0,5,0">
+                    <SearchBar Placeholder="Keresés..." HorizontalOptions="FillAndExpand" BackgroundColor="White"/>
+                    <ImageButton Source="{mvvm:ImageResource Raktarkezeles.Images.barcode.png}" Aspect="AspectFit" BackgroundColor="White" HorizontalOptions="FillAndExpand" VerticalOptions="End" WidthRequest="40" HeightRequest="40" />
                 </StackLayout>
                 <CollectionView ItemsSource="{Binding Parts}" SelectedItem="{Binding SelectedPart}" SelectionChangedCommand="{Binding GoToDetailsCommand}" SelectionMode="Single" Background="White">
                     <CollectionView.ItemTemplate>
@@ -42,7 +47,7 @@
                                     <ColumnDefinition Width="25*"/>
                                     <ColumnDefinition Width="15*"/>
                                 </Grid.ColumnDefinitions>
-                                <BoxView Grid.Column="0" Color="LightBlue"/>
+                                <Image Grid.Column="0" Source="{Binding Image, Converter={StaticResource byteToImage}, TargetNullValue={mvvm:ImageResource Raktarkezeles.Images.placeholder_small.png}}" Aspect="AspectFill" HeightRequest="100" WidthRequest="100"/>
                                 <StackLayout Grid.Column="1" Orientation="Vertical">
                                     <Label Text="{Binding Name}" FontAttributes="Bold" FontSize="Large" LineBreakMode="TailTruncation" TextColor="Black"/>
                                     <Label Text="{Binding Manufacturer.Name}" FontSize="16" TextColor="Black"/>
@@ -57,7 +62,7 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
             </StackLayout>
-            <Button CornerRadius="40" Padding="0,0,0,0" BackgroundColor="LightBlue" Text="+" FontSize="48" TextColor="White" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds=".95,.95,80,80" Command="{Binding GoToNewPartCommand}"/>
+            <Button Text="+" FontSize="42" TextColor="White" BackgroundColor="#1476D2" CornerRadius="45" AbsoluteLayout.LayoutBounds=".95,.95,90,90" AbsoluteLayout.LayoutFlags="PositionProportional" Command="{Binding GoToNewPartCommand}"/>
         </AbsoluteLayout>
     </ContentPage.Content>
 </ContentPage>

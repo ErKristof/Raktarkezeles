@@ -3,19 +3,25 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              xmlns:viewmodel="clr-namespace:Raktarkezeles.ViewModels"
              xmlns:models="clr-namespace:Raktarkezeles.Models"
+             xmlns:mvvm="clr-namespace:Raktarkezeles.MVVM"
              x:DataType="viewmodel:DetailsViewModel"
              x:Class="Raktarkezeles.Views.DetailsPage"
              NavigationPage.HasBackButton="True"
              x:Name="MyPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <mvvm:ByteToImageConverter x:Key="byteToImage"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.ToolbarItems>
-        <ToolbarItem x:Name="modify" Text="Szerkesztés" Order="Primary"  Priority="0" Command="{Binding EditPartCommand}"/>
-        <ToolbarItem x:Name="delete" Text="Törlés" Order="Primary" Priority="1" Command="{Binding DeletePartCommand}"/>
+        <ToolbarItem IconImageSource="{mvvm:ImageResource Raktarkezeles.Images.edit.png}" Order="Primary"  Priority="0" Command="{Binding EditPartCommand}"/>
+        <ToolbarItem IconImageSource="{mvvm:ImageResource Raktarkezeles.Images.delete.png}" Order="Primary" Priority="1" Command="{Binding DeletePartCommand}"/>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <CollectionView x:Name="list" SelectionMode="None" ItemsSource="{Binding Occurrences, Mode=TwoWay}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="White">
             <CollectionView.Header>
                 <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" x:DataType="viewmodel:DetailsViewModel">
-                    <BoxView BackgroundColor="LightBlue" HeightRequest="200"/>
+                    <Image Source="{Binding Part.Image, Converter={StaticResource byteToImage}, TargetNullValue={mvvm:ImageResource Raktarkezeles.Images.placeholder.png}}" Aspect="AspectFill" HeightRequest="240"/>
                     <Grid Padding="5,5,5,5" BackgroundColor="White" HorizontalOptions="Fill" VerticalOptions="Fill">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="66*"/>
@@ -41,7 +47,7 @@
                     <SwipeView BackgroundColor="White" VerticalOptions="Fill" HorizontalOptions="Fill">
                         <SwipeView.RightItems>
                             <SwipeItems>
-                                <SwipeItem Text="Törlés" BackgroundColor="Red" Command="{Binding BindingContext.DeleteOccurrenceCommnad, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
+                                <SwipeItem IconImageSource="{mvvm:ImageResource Raktarkezeles.Images.delete.png}" BackgroundColor="Red" Command="{Binding BindingContext.DeleteOccurrenceCommnad, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
                             </SwipeItems>
                         </SwipeView.RightItems>
                         <Grid BackgroundColor="White" VerticalOptions="Fill" HorizontalOptions="Fill" Padding="5">
@@ -61,7 +67,7 @@
                                 <Button Text="-" FontSize="30" HorizontalOptions="Fill" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White" Command="{Binding BindingContext.MinusOneCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
                                 <Button Text="{Binding Quantity}"  FontSize="18" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="75" BackgroundColor="White" Command="{Binding BindingContext.ChangeQuantityCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
                                 <Button Text="+" FontSize="30" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White" Command="{Binding BindingContext.PlusOneCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
-                                <Button Text=">" FontSize="30" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White" Command="{Binding BindingContext.TransferQuantityCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
+                                <ImageButton Source="{mvvm:ImageResource Raktarkezeles.Images.transfer.png}" Padding="7,7,7,0" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White" Command="{Binding BindingContext.TransferQuantityCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
                             </StackLayout>
                         </Grid>
                     </SwipeView>

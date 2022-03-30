@@ -9,6 +9,9 @@ using Raktarkezeles.DAL;
 using Xamarin.Forms;
 using System.Windows.Input;
 using Raktarkezeles.MVVM;
+using System.Threading.Tasks;
+using Xamarin.Essentials;
+using System.IO;
 
 namespace Raktarkezeles.ViewModels
 {
@@ -29,6 +32,7 @@ namespace Raktarkezeles.ViewModels
         }
 
         public ICommand AddPartCommand { protected set; get; }
+        public ICommand TakePictureCommand { private set; get; }
  
         private List<Manufacturer> manufacturers;
         private List<Category> categories;
@@ -61,6 +65,7 @@ namespace Raktarkezeles.ViewModels
             {
                 AddPartCommand = new Command(AddPartCommandExecute);
             }
+            TakePictureCommand = new Command(TakePictureComandExecute);
         }
 
         private async void AddPartCommandExecute()
@@ -83,5 +88,36 @@ namespace Raktarkezeles.ViewModels
             await Application.Current.MainPage.Navigation.PopAsync();
         }
 
+        private async void TakePictureComandExecute()
+        {
+            try
+            {
+                var photo = await MediaPicker.CapturePhotoAsync();
+                if(photo == null)
+                {
+                    return;
+                }
+                var stream = await photo.OpenReadAsync();
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    stream.CopyTo(ms);
+                    newPart.Image = ms.ToArray();
+                    OnPropertyChanged(nameof(NewPart));
+                }
+                
+            }
+            catch (FeatureNotSupportedException fnsEx)
+            {
+                await Application.Current.MainPage.DisplayAlert("Exception", fnsEx.Message,"OK");
+            }
+            catch (PermissionException pEx)
+            {
+                await Application.Current.MainPage.DisplayAlert("Exception", pEx.Message, "OK");
+            }
+            catch(Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Exception", ex.Message, "OK");
+            }
+        }
     }
 }
