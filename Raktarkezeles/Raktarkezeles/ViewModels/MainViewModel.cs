@@ -3,6 +3,7 @@ using System.Text;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
+using System.Linq;
 using System.Collections.ObjectModel;
 using Raktarkezeles.Models;
 using Raktarkezeles.Views;
@@ -15,7 +16,7 @@ namespace Raktarkezeles.ViewModels
 {
     public class MainViewModel : BindableBase
     {
-        private ObservableCollection<Part> parts = PartContext.GetParts();
+        private ObservableCollection<Part> parts = new ObservableCollection<Part>();
         public ObservableCollection<Part> Parts
         {
             get
@@ -25,7 +26,6 @@ namespace Raktarkezeles.ViewModels
             set
             {
                 parts = value;
-                OnPropertyChanged();
             }
         }
         private Part selectedPart;
@@ -41,6 +41,23 @@ namespace Raktarkezeles.ViewModels
                 OnPropertyChanged();
             }
         }
+        private string searchText;
+        public string SearchText
+        {
+            get
+            {
+                return searchText;
+            }
+            set
+            {
+                if(searchText != value)
+                {
+                    searchText = value;
+                    SearchPartsCommandExecute(searchText);
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public ICommand GoToNewPartCommand { protected set; get; }
         public ICommand GoToDetailsCommand { protected set; get; }
@@ -49,6 +66,10 @@ namespace Raktarkezeles.ViewModels
         {
             GoToDetailsCommand = new Command(GoToDetailsCommandExecute);
             GoToNewPartCommand = new Command(GoToNewPartCommandExecute);
+            foreach(Part p in PartContext.GetParts())
+            {
+                Parts.Add(p);
+            }
         }
         private async void GoToDetailsCommandExecute()
         {
@@ -68,11 +89,25 @@ namespace Raktarkezeles.ViewModels
             newPage.BindingContext = newVM;
             await Application.Current.MainPage.Navigation.PushAsync(newPage);
         }
+        private void SearchPartsCommandExecute(string input)
+        {
+            Parts.Clear();
 
+            var containedlist = PartContext.GetFilteredList(input);
+            foreach(Part p in containedlist)
+            {
+                Parts.Add(p);
+            }
+            OnPropertyChanged(nameof(Parts));
+        }
         public override void OnAppearing()
         {
             base.OnAppearing();
-            Parts = PartContext.GetParts();
+            Parts.Clear();
+            foreach(Part p in PartContext.GetParts())
+            {
+                Parts.Add(p);
+            }
             foreach (Part p in Parts)
             {
                 int sum = 0;

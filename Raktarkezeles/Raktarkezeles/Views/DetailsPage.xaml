@@ -18,7 +18,7 @@
         <ToolbarItem IconImageSource="{mvvm:ImageResource Raktarkezeles.Images.delete.png}" Order="Primary" Priority="1" Command="{Binding DeletePartCommand}"/>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
-        <CollectionView x:Name="list" SelectionMode="None" ItemsSource="{Binding Occurrences, Mode=TwoWay}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="White">
+        <CollectionView SelectionMode="None" ItemsSource="{Binding Occurrences}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="White">
             <CollectionView.Header>
                 <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" x:DataType="viewmodel:DetailsViewModel">
                     <Image Source="{Binding Part.Image, Converter={StaticResource byteToImage}, TargetNullValue={mvvm:ImageResource Raktarkezeles.Images.placeholder.png}}" Aspect="AspectFill" HeightRequest="240"/>

@@ -35,10 +35,10 @@
         <AbsoluteLayout>
             <StackLayout Orientation="Vertical" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
                 <StackLayout Orientation="Horizontal" Padding="5,0,5,0">
-                    <SearchBar Placeholder="Keresés..." HorizontalOptions="FillAndExpand" BackgroundColor="White"/>
-                    <ImageButton Source="{mvvm:ImageResource Raktarkezeles.Images.barcode.png}" Aspect="AspectFit" BackgroundColor="White" HorizontalOptions="FillAndExpand" VerticalOptions="End" WidthRequest="40" HeightRequest="40" />
+                    <SearchBar Text="{Binding SearchText}" Placeholder="Keresés..." HorizontalOptions="FillAndExpand" BackgroundColor="White"/>
+                    <ImageButton Source="{mvvm:ImageResource Raktarkezeles.Images.barcode.png}" Aspect="AspectFit" BackgroundColor="White" HorizontalOptions="End" VerticalOptions="End" WidthRequest="40" HeightRequest="40" />
                 </StackLayout>
-                <CollectionView ItemsSource="{Binding Parts}" SelectedItem="{Binding SelectedPart}" SelectionChangedCommand="{Binding GoToDetailsCommand}" SelectionMode="Single" Background="White">
+                <CollectionView ItemsSource="{Binding Parts}" EmptyView="Nincsenek alkatrészek a listában" SelectedItem="{Binding SelectedPart}" SelectionChangedCommand="{Binding GoToDetailsCommand}" SelectionMode="Single" Background="White">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Part">
                             <Grid>

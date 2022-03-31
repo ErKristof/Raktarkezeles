@@ -166,5 +166,10 @@ namespace Raktarkezeles.DAL
         {
             return parts.Where(p => p.Id == id).FirstOrDefault().Occurrences;
         }
+        public static ICollection<Part> GetFilteredList(string input)
+        {
+            input = input.ToUpper();
+            return parts.Where(p => p.Name.ToUpper().Contains(input) || p.Category.Name.ToUpper().Contains(input) || p.Manufacturer.Name.ToUpper().Contains(input) || p.Description.ToUpper().Contains(input) || p.ItemNumber.ToUpper().Contains(input) || p.TypeNumber.ToUpper().Contains(input)).ToList();
+        }
     }
 }
