@@ -92,7 +92,10 @@ namespace Raktarkezeles.ViewModels
         }
         private void MinusOneCommandExecute(int id)
         {
-            PartContext.ChangeQuantity(id, -1);
+            if (Occurrences.Where(o => o.Id == id).First().Quantity > 0)
+            {
+                PartContext.ChangeQuantity(id, -1);
+            }
         }
         private void PlusOneCommandExecute(int id)
         {

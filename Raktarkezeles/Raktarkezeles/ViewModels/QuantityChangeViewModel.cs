@@ -24,8 +24,8 @@ namespace Raktarkezeles.ViewModels
                 OnPropertyChanged();
             }
         }
-        private int quantity;
-        public int Quantity
+        private string quantity;
+        public string Quantity
         {
             get
             {
@@ -37,6 +37,8 @@ namespace Raktarkezeles.ViewModels
                 OnPropertyChanged();
             }
         }
+        private bool invalidQuantity = false;
+        public bool InvalidQuantity { get { return invalidQuantity; } set { invalidQuantity = value; OnPropertyChanged(); } }
         public ICommand SubtractQuantityCommand { private set; get; }
         public ICommand AddQuantityCommand { private set; get; }
         public ICommand CancelCommand { private set; get; }
@@ -49,24 +51,37 @@ namespace Raktarkezeles.ViewModels
         }
         private async void SubtractQuantityCommndExecute()
         {
-            if (occurrence.Quantity - quantity >= 0)
+            if (!CheckValidation(true))
             {
-                PartContext.ChangeQuantity(occurrence.Id, -quantity);
+                PartContext.ChangeQuantity(occurrence.Id, -int.Parse(Quantity));
                 await Application.Current.MainPage.Navigation.PopModalAsync();
-            }
-            else
-            {
-
             }
         }
         private async void AddQuantityCommandExecute()
         {
-            PartContext.ChangeQuantity(occurrence.Id, quantity);
-            await Application.Current.MainPage.Navigation.PopModalAsync();
+            if (!CheckValidation(false))
+            {
+                PartContext.ChangeQuantity(occurrence.Id, int.Parse(Quantity));
+                await Application.Current.MainPage.Navigation.PopModalAsync();
+            }
         }
         private async void CancelCommandExecute()
         {
             await Application.Current.MainPage.Navigation.PopModalAsync();
+        }
+        private bool CheckValidation(bool isSubtracting)
+        {
+            int result;
+            InvalidQuantity = !int.TryParse(Quantity, out result);
+            if (isSubtracting && !InvalidQuantity)
+            {
+                InvalidQuantity = Occurrence.Quantity - result < 0;
+            }
+            else if(!isSubtracting && !InvalidQuantity)
+            {
+                InvalidQuantity = Occurrence.Quantity + result < 0;
+            }
+            return InvalidQuantity;
         }
     }
 }

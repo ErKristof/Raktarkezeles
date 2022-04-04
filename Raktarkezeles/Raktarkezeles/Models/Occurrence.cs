@@ -30,5 +30,9 @@ namespace Raktarkezeles.Models
                 }
             }
         }
+        public override string ToString()
+        {
+            return Warehouse != null ? Warehouse.Name + " " + Rack + ". polc " + Shelf + ". szint" : base.ToString();
+        }
     }
 }

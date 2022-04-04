@@ -4,7 +4,6 @@
              xmlns:viewmodels="clr-namespace:Raktarkezeles.ViewModels"
              xmlns:models="clr-namespace:Raktarkezeles.Models"
              xmlns:mvvm="clr-namespace:Raktarkezeles.MVVM"
-             xmlns:local="clr-namespace:Raktarkezeles"
              x:DataType="viewmodels:MainViewModel"
              x:Class="Raktarkezeles.Views.MainPage"
              Title="Raktárkezelés" NavigationPage.HasNavigationBar="False"
