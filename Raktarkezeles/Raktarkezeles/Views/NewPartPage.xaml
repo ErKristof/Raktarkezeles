@@ -6,32 +6,33 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <mvvm:ByteToImageConverter x:Key="byteToImage"/>
+            
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
         <ScrollView>
-            <StackLayout VerticalOptions="FillAndExpand">
+            <StackLayout VerticalOptions="FillAndExpand" BackgroundColor="White">
                 <ImageButton Source="{Binding Image, Converter={StaticResource byteToImage}, TargetNullValue={mvvm:ImageResource Raktarkezeles.Images.placeholder_edit.png}}"  Aspect="AspectFill" BackgroundColor="White" HeightRequest="240" Command="{Binding TakePictureCommand}"/>
-                <StackLayout Padding="10,0,10,0" BackgroundColor="White">
-                    <Label Text="Kép megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidImage}" BackgroundColor="White"/>
-                    <Entry Placeholder="Név" Text="{Binding Name}"/>
-                    <Label Text="Név megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidName}" BackgroundColor="White"/>
-                    <Picker Title="Gyártó" ItemsSource="{Binding Manufacturers}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding Manufacturer}"/>
-                    <Label Text="Gyártó megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidManufacturer}" BackgroundColor="White"/>
-                    <Entry Placeholder="Típus" Text="{Binding TypeNumber}"/>
-                    <Label Text="Típus megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidTypeNumber}" BackgroundColor="White"/>
+                <StackLayout Padding="10,0,10,0">
+                    <Label Text="Kép megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidImage}"/>
+                    <Entry Placeholder="Név" Text="{Binding Name}" FontSize="20"/>
+                    <Label Text="Név megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidName}"/>
+                    <Picker Title="Gyártó" ItemsSource="{Binding Manufacturers}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding Manufacturer}" FontSize="20"/>
+                    <Label Text="Gyártó megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidManufacturer}" />
+                    <Entry Placeholder="Típus" Text="{Binding TypeNumber}" FontSize="20"/>
+                    <Label Text="Típus megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidTypeNumber}"/>
                     <StackLayout Orientation="Horizontal">
-                        <Entry Placeholder="Cikkszám" Text="{Binding ItemNumber}" HorizontalOptions="FillAndExpand"/>
-                        <ImageButton Source="{mvvm:ImageResource Raktarkezeles.Images.barcode.png}" Aspect="AspectFit" BackgroundColor="White" HeightRequest="45"  HorizontalOptions="End" VerticalOptions="Center" Padding="5,0,5,5"/>
+                        <Entry Placeholder="Cikkszám" Text="{Binding ItemNumber}" HorizontalOptions="FillAndExpand" FontSize="20"/>
+                        <ImageButton Source="{mvvm:ImageResource Raktarkezeles.Images.barcode.png}" Aspect="AspectFit" HeightRequest="45"  HorizontalOptions="End" VerticalOptions="Center" Padding="5,0,5,5" Command="{Binding ScanBarcodeCommand}" BackgroundColor="White"/>
                     </StackLayout>
-                    <Label Text="Cikkszám megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidItemNumber}" BackgroundColor="White"/>
-                    <Picker Title="Mennyiségi egység" ItemsSource="{Binding Units}" ItemDisplayBinding="{Binding FullName}" SelectedItem="{Binding Unit}"/>
-                    <Label Text="Mennyiségi egység megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidUnit}" BackgroundColor="White"/>
-                    <Picker Title="Kategória" ItemsSource="{Binding Categories}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding Category}"/>
-                    <Label Text="Kategória megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidCategory}" BackgroundColor="White"/>
-                    <Editor Placeholder="Leírás" Text="{Binding Description}" AutoSize="TextChanges" />
-                    <Button Text="Mentés" Command="{Binding AddPartCommand}"/>
+                    <Label Text="Cikkszám megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidItemNumber}"/>
+                    <Picker Title="Mennyiségi egység" ItemsSource="{Binding Units}" ItemDisplayBinding="{Binding FullName}" SelectedItem="{Binding Unit}" FontSize="20"/>
+                    <Label Text="Mennyiségi egység megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidUnit}" />
+                    <Picker Title="Kategória" ItemsSource="{Binding Categories}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding Category}" FontSize="20"/>
+                    <Label Text="Kategória megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidCategory}" />
+                    <Editor Placeholder="Leírás" Text="{Binding Description}" AutoSize="TextChanges" FontSize="20"/>
                 </StackLayout>
+                <Button Text="Mentés" Command="{Binding AddPartCommand}" Margin="10" VerticalOptions="EndAndExpand"/>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

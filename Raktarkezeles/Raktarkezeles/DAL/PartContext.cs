@@ -14,8 +14,8 @@ namespace Raktarkezeles.DAL
         public static List<Unit> units = new List<Unit>();
         public static List<Warehouse> warehouses = new List<Warehouse>();
         public static ObservableCollection<Part> parts = new ObservableCollection<Part>();
-        public static int latestPartId = 2;
-        public static int latestOccurrenceId = 3;
+        public static int latestPartId = 0;
+        public static int latestOccurrenceId = 0;
 
         static  PartContext()
         {
@@ -33,15 +33,6 @@ namespace Raktarkezeles.DAL
 
             warehouses.Add(new Warehouse() { Id = 0, Name = "Iroda" });
             warehouses.Add(new Warehouse() { Id = 1, Name = "Raktár" });
-
-            parts.Add(new Part() { Id = 0, ManufacturerId = 1, Manufacturer = manufacturers[1], CategoryId = 0, Category = categories[0], UnitId = 0, Unit = units[0], Name = "Sorkapocs", TypeNumber = "8WA1011-1DF11", ItemNumber = "8WA1011-1DF11", Quantity = 0, Description = "Through-type terminal thermoplast Screw terminal on both sides Single terminal, 6mm, Sz. 2.5 " });
-            parts.Add(new Part() { Id = 1, ManufacturerId = 0, Manufacturer = manufacturers[0], CategoryId = 1, Category = categories[1], UnitId = 1, Unit = units[1], Name = "Sorkapocs véglap", TypeNumber = "8WA1011-1DF13", ItemNumber = "8WA1011-1DF13", Quantity = 0, Description = "" });
-
-            parts[0].Occurrences = new ObservableCollection<Occurrence>();
-            parts[0].Occurrences.Add(new Occurrence() { Id = 0, PartId = 0, Part = parts[0], WarehouseId = 0, Warehouse = warehouses[0], Rack = 1, Shelf = 2, Quantity = 10 });
-            parts[0].Occurrences.Add(new Occurrence() { Id = 1, PartId = 0, Part = parts[0], WarehouseId = 1, Warehouse = warehouses[1], Rack = 3, Shelf = 8, Quantity = 8 });
-            parts[0].Occurrences.Add(new Occurrence() { Id = 2, PartId = 0, Part = parts[0], WarehouseId = 0, Warehouse = warehouses[0], Rack = 1, Shelf = 3, Quantity = 14 });
-            parts[1].Occurrences = new ObservableCollection<Occurrence>();
         }
 
         public static ObservableCollection<Part> GetParts()
@@ -169,6 +160,7 @@ namespace Raktarkezeles.DAL
         public static ICollection<Part> GetFilteredList(string input)
         {
             input = input.ToUpper();
+            var filteredList = new List<Part>();
             return parts.Where(p => p.Name.ToUpper().Contains(input) || p.Category.Name.ToUpper().Contains(input) || p.Manufacturer.Name.ToUpper().Contains(input) || p.ItemNumber.ToUpper().Contains(input) || p.TypeNumber.ToUpper().Contains(input)).ToList();
         }
     }

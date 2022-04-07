@@ -12,6 +12,8 @@ using Raktarkezeles.MVVM;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using System.IO;
+using ZXing.Mobile;
+using ZXing;
 
 namespace Raktarkezeles.ViewModels
 {
@@ -148,6 +150,7 @@ namespace Raktarkezeles.ViewModels
         }
         public ICommand AddPartCommand { protected set; get; }
         public ICommand TakePictureCommand { private set; get; }
+        public ICommand ScanBarcodeCommand { private set; get; }
 
         private bool invalidName = false;
         public bool InvalidName { get { return invalidName; } set { invalidName = value; OnPropertyChanged(); } }
@@ -204,6 +207,7 @@ namespace Raktarkezeles.ViewModels
                 AddPartCommand = new Command(AddPartCommandExecute);
             }
             TakePictureCommand = new Command(TakePictureComandExecute);
+            ScanBarcodeCommand = new Command(ScanBarcodeCommandExecute);
         }
 
         private async void AddPartCommandExecute()
@@ -264,6 +268,7 @@ namespace Raktarkezeles.ViewModels
                 using (MemoryStream ms = new MemoryStream())
                 {
                     stream.CopyTo(ms);
+                    var rotatedImage = 
                     Image = ms.ToArray();
                 }
                 
@@ -279,6 +284,15 @@ namespace Raktarkezeles.ViewModels
             catch(Exception ex)
             {
                 await Application.Current.MainPage.DisplayAlert("Exception", ex.Message, "OK");
+            }
+        }
+        private async void ScanBarcodeCommandExecute()
+        {
+            MobileBarcodeScanner scanner = new MobileBarcodeScanner();
+            Result result = await scanner.Scan();
+            if (result != null)
+            {
+                ItemNumber = result.Text;
             }
         }
         private bool CheckValidation()

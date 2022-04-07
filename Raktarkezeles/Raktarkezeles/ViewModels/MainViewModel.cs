@@ -11,6 +11,8 @@ using Xamarin.Forms;
 using System.Windows.Input;
 using Raktarkezeles.DAL;
 using Raktarkezeles.MVVM;
+using ZXing.Mobile;
+using ZXing;
 
 namespace Raktarkezeles.ViewModels
 {
@@ -41,7 +43,7 @@ namespace Raktarkezeles.ViewModels
                 OnPropertyChanged();
             }
         }
-        private string searchText;
+        private string searchText = "";
         public string SearchText
         {
             get
@@ -50,7 +52,7 @@ namespace Raktarkezeles.ViewModels
             }
             set
             {
-                if(searchText != value)
+                if (searchText != value)
                 {
                     searchText = value;
                     SearchPartsCommandExecute(searchText);
@@ -61,11 +63,12 @@ namespace Raktarkezeles.ViewModels
 
         public ICommand GoToNewPartCommand { protected set; get; }
         public ICommand GoToDetailsCommand { protected set; get; }
-
+        public ICommand ScanBarcodeCommand { private set; get; }
         public MainViewModel()
         {
             GoToDetailsCommand = new Command(GoToDetailsCommandExecute);
             GoToNewPartCommand = new Command(GoToNewPartCommandExecute);
+            ScanBarcodeCommand = new Command(ScanBarcodeCommandExecute);
             foreach(Part p in PartContext.GetParts())
             {
                 Parts.Add(p);
@@ -92,30 +95,49 @@ namespace Raktarkezeles.ViewModels
         private void SearchPartsCommandExecute(string input)
         {
             Parts.Clear();
-
             var containedlist = PartContext.GetFilteredList(input);
             foreach(Part p in containedlist)
             {
                 Parts.Add(p);
             }
-            OnPropertyChanged(nameof(Parts));
+        }
+        private async void ScanBarcodeCommandExecute()
+        {
+            MobileBarcodeScanner scanner = new MobileBarcodeScanner();
+            Result result = await scanner.Scan();
+            var filteredParts = parts.Where(p => p.ItemNumber.ToUpper().Contains(result.Text.ToUpper())).ToList();
+            if(filteredParts.Count == 1)
+            {
+                SelectedPart = filteredParts[0];
+                SearchText = "";
+            }
+            else
+            {
+                SearchText = result.Text;
+            }
         }
         public override void OnAppearing()
         {
             base.OnAppearing();
-            Parts.Clear();
-            foreach(Part p in PartContext.GetParts())
+            if (SearchText == "")
             {
-                Parts.Add(p);
-            }
-            foreach (Part p in Parts)
-            {
-                int sum = 0;
-                foreach (Occurrence o in p.Occurrences)
+                Parts.Clear();
+                foreach (Part p in PartContext.GetParts())
                 {
-                    sum += o.Quantity;
+                    Parts.Add(p);
                 }
-                p.Quantity = sum;
+                foreach (Part p in Parts)
+                {
+                    if (p.Occurrences != null)
+                    {
+                        int sum = 0;
+                        foreach (Occurrence o in p.Occurrences)
+                        {
+                            sum += o.Quantity;
+                        }
+                        p.Quantity = sum;
+                    }
+                }
             }
         }
     }

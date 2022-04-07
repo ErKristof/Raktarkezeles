@@ -17,16 +17,100 @@ namespace Raktarkezeles.ViewModels
     public class DetailsViewModel : BindableBase
     {
         private Part part;
-        public Part Part
+        private byte[] image;
+        public byte[] Image
         {
-            get 
-            { 
-                return part;
+            get
+            {
+                return image;
             }
             set
             {
-                part = value;
-                OnPropertyChanged();
+                if (image != value)
+                {
+                    image = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private string name;
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                if (name != value)
+                {
+                    name = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Manufacturer manufacturer;
+        public Manufacturer Manufacturer
+        {
+            get
+            {
+                return manufacturer;
+            }
+            set
+            {
+                if (manufacturer != value)
+                {
+                    manufacturer = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private string itemNumber;
+        public string ItemNumber
+        {
+            get
+            {
+                return itemNumber;
+            }
+            set
+            {
+                if (itemNumber != value)
+                {
+                    itemNumber = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private string typeNumber;
+        public string TypeNumber
+        {
+            get
+            {
+                return typeNumber;
+            }
+            set
+            {
+                if (typeNumber != value)
+                {
+                    typeNumber = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private string description;
+        public string Description
+        {
+            get
+            {
+                return description;
+            }
+            set
+            {
+                if (description != value)
+                {
+                    description = value;
+                    OnPropertyChanged();
+                }
             }
         }
         public ObservableCollection<Occurrence> Occurrences
@@ -47,7 +131,7 @@ namespace Raktarkezeles.ViewModels
         public ICommand DeleteOccurrenceCommnad { protected set; get; }
         public DetailsViewModel(int partId)
         {
-            Part = PartContext.GetPart(partId);
+            part = PartContext.GetPart(partId);
             EditPartCommand = new Command(EditPartCommandExecute);
             DeletePartCommand = new Command(DeletePartCommandExecute);
             NewOccurrenceCommand = new Command(NewOccurrenceCommandExecute);
@@ -108,7 +192,17 @@ namespace Raktarkezeles.ViewModels
         public override void OnAppearing()
         {
             base.OnAppearing();
-            Part = PartContext.GetPart(part.Id);
+            part = PartContext.GetPart(part.Id);
+            UpdatePage();
+        }
+        private void UpdatePage()
+        {
+            Image = part.Image;
+            Name = part.Name;
+            Manufacturer = part.Manufacturer;
+            ItemNumber = part.ItemNumber;
+            TypeNumber = part.TypeNumber;
+            Description = part.Description;
         }
     }
 }

@@ -34,23 +34,23 @@
         <AbsoluteLayout>
             <StackLayout Orientation="Vertical" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
                 <StackLayout Orientation="Horizontal" Padding="5,0,5,0">
-                    <SearchBar Text="{Binding SearchText}" Placeholder="Keresés..." HorizontalOptions="FillAndExpand" BackgroundColor="White"/>
-                    <ImageButton Source="{mvvm:ImageResource Raktarkezeles.Images.barcode.png}" Aspect="AspectFit" BackgroundColor="White" HorizontalOptions="End" VerticalOptions="End" WidthRequest="40" HeightRequest="40" />
+                    <SearchBar Text="{Binding SearchText}" Placeholder="Keresés..." HorizontalOptions="StartAndExpand"/>
+                    <ImageButton Source="{mvvm:ImageResource Raktarkezeles.Images.barcode.png}" Aspect="AspectFit" BackgroundColor="White" HorizontalOptions="End" VerticalOptions="End" WidthRequest="40" HeightRequest="40" Command="{Binding ScanBarcodeCommand}"/>
                 </StackLayout>
                 <CollectionView ItemsSource="{Binding Parts}" EmptyView="Nincsenek alkatrészek a listában" SelectedItem="{Binding SelectedPart}" SelectionChangedCommand="{Binding GoToDetailsCommand}" SelectionMode="Single" Background="White">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Part">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="10*"/>
+                                    <ColumnDefinition Width="12*"/>
                                     <ColumnDefinition Width="25*"/>
                                     <ColumnDefinition Width="15*"/>
                                 </Grid.ColumnDefinitions>
-                                <Image Grid.Column="0" Source="{Binding Image, Converter={StaticResource byteToImage}, TargetNullValue={mvvm:ImageResource Raktarkezeles.Images.placeholder_small.png}}" Aspect="AspectFill" HeightRequest="100" WidthRequest="100"/>
+                                <Image Grid.Column="0" Source="{Binding Image, Converter={StaticResource byteToImage}, TargetNullValue={mvvm:ImageResource Raktarkezeles.Images.placeholder_small.png}}" Aspect="AspectFill" HeightRequest="100" Margin="2,1,0,2"/>
                                 <StackLayout Grid.Column="1" Orientation="Vertical">
-                                    <Label Text="{Binding Name}" FontAttributes="Bold" FontSize="Large" LineBreakMode="TailTruncation" TextColor="Black"/>
-                                    <Label Text="{Binding Manufacturer.Name}" FontSize="16" TextColor="Black"/>
-                                    <Label Text="{Binding Category.Name}" FontSize="16" TextColor="Black"/>
+                                    <Label Text="{Binding Name}" FontAttributes="Bold" FontSize="20" LineBreakMode="TailTruncation" TextColor="Black"/>
+                                    <Label Text="{Binding Manufacturer.Name}" FontSize="14" TextColor="Black"/>
+                                    <Label Text="{Binding Category.Name}" FontSize="14" TextColor="Black"/>
                                 </StackLayout>
                                 <StackLayout Grid.Column="2" Orientation="Horizontal" HorizontalOptions="End" Padding="10,0,10,0">
                                     <Label Text="{Binding Quantity}" FontSize="Large" VerticalOptions="Center" TextColor="Black"/>

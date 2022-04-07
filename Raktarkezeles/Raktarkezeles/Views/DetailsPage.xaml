@@ -20,31 +20,21 @@
     <ContentPage.Content>
         <CollectionView SelectionMode="None" ItemsSource="{Binding Occurrences}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="White">
             <CollectionView.Header>
-                <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" x:DataType="viewmodel:DetailsViewModel">
-                    <Image Source="{Binding Part.Image, Converter={StaticResource byteToImage}, TargetNullValue={mvvm:ImageResource Raktarkezeles.Images.placeholder.png}}" Aspect="AspectFill" HeightRequest="240"/>
-                    <Grid Padding="5,5,5,5" BackgroundColor="White" HorizontalOptions="Fill" VerticalOptions="Fill">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="66*"/>
-                            <ColumnDefinition Width="34*"/>
-                        </Grid.ColumnDefinitions>
-                        <Label Text="{Binding Part.Name}" FontSize="26" FontAttributes="Bold" TextColor="Black" LineBreakMode="TailTruncation" Grid.Column="0" VerticalOptions="End" HorizontalOptions="Fill"/>
-                        <Label Text="{Binding Part.Manufacturer.Name}" FontSize="16" TextColor="Black" LineBreakMode="TailTruncation" Grid.Column="1" VerticalOptions="End" HorizontalOptions="Fill" HorizontalTextAlignment="End"/>
-                    </Grid>
-                    <StackLayout Orientation="Horizontal" HorizontalOptions="Fill" VerticalOptions="Fill" Padding="7,0,0,0">
-                        <Label Text="Típus:" FontSize="18"  TextColor="Black" />
-                        <Label Text="{Binding Part.TypeNumber}" FontSize="18" TextColor="Black" />
+                <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" x:DataType="viewmodel:DetailsViewModel" >
+                    <Image Source="{Binding Image, Converter={StaticResource byteToImage}, TargetNullValue={mvvm:ImageResource Raktarkezeles.Images.placeholder.png}}" Aspect="AspectFill" HeightRequest="240"/>
+                    <StackLayout Orientation="Horizontal" Padding="5,5,5,5" HorizontalOptions="Fill" VerticalOptions="Fill">
+                        <Label Text="{Binding Name}" FontSize="24" FontAttributes="Bold" TextColor="Black" LineBreakMode="TailTruncation" VerticalOptions="End" HorizontalOptions="FillAndExpand"/>
+                        <Label Text="{Binding Manufacturer.Name}" FontSize="14" TextColor="Black" LineBreakMode="TailTruncation" VerticalOptions="End" HorizontalOptions="EndAndExpand" HorizontalTextAlignment="End"/>
                     </StackLayout>
-                    <StackLayout Orientation="Horizontal" HorizontalOptions="Fill" VerticalOptions="Fill" Padding="7,0,0,0">
-                        <Label Text="Cikkszám:" FontSize="18" TextColor="Black"/>
-                        <Label Text="{Binding Part.ItemNumber}" FontSize="18" TextColor="Black"/>
-                    </StackLayout>
-                    <Label Text="Leírás:" FontSize="18" Padding="7,0,0,0" TextColor="Black" HorizontalOptions="Fill" VerticalOptions="Fill"/>
-                    <Label Text="{Binding Part.Description}" Padding="7,0,7,0" FontSize="16" TextColor="Black"  LineBreakMode="WordWrap" HorizontalOptions="Fill" VerticalOptions="Fill"/>
+                    <Label Text="{Binding TypeNumber, StringFormat='{}Típus: {0}'}" FontSize="16" TextColor="Black" Padding="7,0,0,0"/>
+                    <Label Text="{Binding ItemNumber, StringFormat='{}Cikkszám: {0}'}" FontSize="16" TextColor="Black" Padding="7,0,0,0"/>
+                    <Label Text="Leírás:" FontSize="16" Padding="7,0,0,0" TextColor="Black" HorizontalOptions="Fill" VerticalOptions="Fill"/>
+                    <Label Text="{Binding Description}" Padding="7,0,7,0" FontSize="14" TextColor="Black"  LineBreakMode="WordWrap" HorizontalOptions="Fill" VerticalOptions="Fill"/>
                 </StackLayout>
             </CollectionView.Header>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Occurrence">
-                    <SwipeView BackgroundColor="White" VerticalOptions="Fill" HorizontalOptions="Fill">
+                    <SwipeView VerticalOptions="Fill" HorizontalOptions="Fill" HeightRequest="75">
                         <SwipeView.RightItems>
                             <SwipeItems>
                                 <SwipeItem IconImageSource="{mvvm:ImageResource Raktarkezeles.Images.delete.png}" BackgroundColor="Red" Command="{Binding BindingContext.DeleteOccurrenceCommnad, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
@@ -60,21 +50,21 @@
                                 <ColumnDefinition Width="1*"/>
                                 <ColumnDefinition Width="5*"/>
                             </Grid.ColumnDefinitions>
-                            <Label Text="{Binding Warehouse.Name}" FontAttributes="Bold" FontSize="20" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" TextColor="Black" HorizontalOptions="Start" VerticalOptions="End" LineBreakMode="TailTruncation"/>
-                            <Label Padding="0,0,0,5" Grid.Column="0" Grid.Row="1" Text="{Binding Rack, StringFormat='{0} polc'}" FontSize="14" HorizontalOptions="End" VerticalOptions="Center" LineBreakMode="TailTruncation"/>
-                            <Label Padding="0,0,0,5" Grid.Column="1" Grid.Row="1" Text="{Binding Shelf, StringFormat='{0} szint'}" FontSize="14" HorizontalOptions="End" VerticalOptions="Center" LineBreakMode="TailTruncation"/>
+                            <Label Text="{Binding Warehouse.Name}" FontAttributes="Bold" FontSize="18" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" TextColor="Black" HorizontalOptions="Start" VerticalOptions="End" LineBreakMode="TailTruncation"/>
+                            <Label Padding="0,0,0,5" Grid.Column="0" Grid.Row="1" Text="{Binding Rack, StringFormat='{0}. polc'}" FontSize="12" HorizontalOptions="End" VerticalOptions="Center" LineBreakMode="TailTruncation" TextColor="Black"/>
+                            <Label Padding="0,0,0,5" Grid.Column="1" Grid.Row="1" Text="{Binding Shelf, StringFormat='{0}. szint'}" FontSize="12" HorizontalOptions="End" VerticalOptions="Center" LineBreakMode="TailTruncation" TextColor="Black"/>
                             <StackLayout Grid.Column="2" Grid.RowSpan="2" Orientation="Horizontal" HorizontalOptions="End" VerticalOptions="FillAndExpand" Padding="5">
-                                <Button Text="-" FontSize="30" HorizontalOptions="Fill" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White" Command="{Binding BindingContext.MinusOneCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
-                                <Button Text="{Binding Quantity}"  FontSize="18" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="75" BackgroundColor="White" Command="{Binding BindingContext.ChangeQuantityCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
-                                <Button Text="+" FontSize="30" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White" Command="{Binding BindingContext.PlusOneCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
-                                <ImageButton Source="{mvvm:ImageResource Raktarkezeles.Images.transfer.png}" Padding="7,7,7,0" HorizontalOptions="End" VerticalOptions="FillAndExpand" WidthRequest="50" BackgroundColor="White" Command="{Binding BindingContext.TransferQuantityCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
+                                <Button Text="-" FontSize="24" FontAttributes="Bold" WidthRequest="50" BackgroundColor="White" TextColor="Black" Command="{Binding BindingContext.MinusOneCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
+                                <Button Text="{Binding Quantity}" FontSize="16" WidthRequest="75" BackgroundColor="White" TextColor="Black" Command="{Binding BindingContext.ChangeQuantityCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
+                                <Button Text="+" FontSize="24" FontAttributes="Bold" WidthRequest="50" BackgroundColor="White" TextColor="Black" Command="{Binding BindingContext.PlusOneCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
+                                <ImageButton Source="{mvvm:ImageResource Raktarkezeles.Images.transfer.png}" Padding="7,7,7,0" WidthRequest="50" BackgroundColor="White" Command="{Binding BindingContext.TransferQuantityCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
                             </StackLayout>
                         </Grid>
                     </SwipeView>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
             <CollectionView.Footer>
-                <Button Text="+ Előfordulási hely hozzáadása" Command="{Binding NewOccurrenceCommand}"/>
+                <Button Text="+ Előfordulási hely hozzáadása" Command="{Binding NewOccurrenceCommand}" Margin="5"/>
             </CollectionView.Footer>
         </CollectionView>
     </ContentPage.Content>
