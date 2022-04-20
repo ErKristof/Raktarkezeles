@@ -57,7 +57,7 @@ namespace Raktarkezeles.ViewModels
         public NewOccurrenceViewModel(int partId)
         {
             part = PartContext.GetPart(partId);
-            warehouses = PartContext.GetWarehouses();
+            warehouses = (List<Warehouse>)PartContext.GetWarehouses();
             SaveOccurrenceCommand = new Command(SaveOccurrenceCommandExecute);
             CancelOccurrenceCommand = new Command(CancelOccurrenceCommandExecute);
         }

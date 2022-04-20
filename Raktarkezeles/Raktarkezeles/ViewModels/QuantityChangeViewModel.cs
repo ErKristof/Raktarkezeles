@@ -53,7 +53,7 @@ namespace Raktarkezeles.ViewModels
         {
             if (!CheckValidation(true))
             {
-                PartContext.ChangeQuantity(occurrence.Id, -int.Parse(Quantity));
+                PartContext.ChangeQuantity(occurrence.Id, Occurrence.Quantity - int.Parse(Quantity));
                 await Application.Current.MainPage.Navigation.PopModalAsync();
             }
         }
@@ -61,7 +61,7 @@ namespace Raktarkezeles.ViewModels
         {
             if (!CheckValidation(false))
             {
-                PartContext.ChangeQuantity(occurrence.Id, int.Parse(Quantity));
+                PartContext.ChangeQuantity(occurrence.Id, Occurrence.Quantity + int.Parse(Quantity));
                 await Application.Current.MainPage.Navigation.PopModalAsync();
             }
         }

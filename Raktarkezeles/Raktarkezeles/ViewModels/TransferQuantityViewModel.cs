@@ -36,10 +36,10 @@ namespace Raktarkezeles.ViewModels
         public bool InvalidQuantity { get { return invalidQuantity; } set { invalidQuantity = value; OnPropertyChanged(); } }
         public ICommand SaveTransferCommand { protected set; get; }
         public ICommand CancelTransferCommand { protected set; get; }
-        public TransferQuantityViewModel(int occurrenceId)
+        public TransferQuantityViewModel(int occurrenceId, Part part)
         {
-            FromOccurrence = PartContext.GetOccurrence(occurrenceId);
-            Occurrences = PartContext.GetOccurrences(FromOccurrence.PartId).Where(p => p.Id != occurrenceId).ToList();
+            FromOccurrence = part.Occurrences.Where(x => x.Id == occurrenceId).DefaultIfEmpty(null).First();
+            Occurrences = part.Occurrences.Where(p => p.Id != occurrenceId).ToList();
             SaveTransferCommand = new Command(SaveTransferCommandExecute);
             CancelTransferCommand = new Command(CancelTransferCommandExecute);
         }
@@ -47,7 +47,8 @@ namespace Raktarkezeles.ViewModels
         {
             if (!CheckValidation())
             {
-                PartContext.TransferQuantity(FromOccurrence.Id, pickedOccurrence.Id, int.Parse(quantity));
+                PartContext.ChangeQuantity(FromOccurrence.Id, FromOccurrence.Quantity - int.Parse(quantity));
+                PartContext.ChangeQuantity(pickedOccurrence.Id, pickedOccurrence.Quantity + int.Parse(quantity));
                 await Application.Current.MainPage.Navigation.PopModalAsync();
             }
         }

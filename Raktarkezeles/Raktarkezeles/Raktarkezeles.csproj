@@ -11,23 +11,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Images\barcode.png" />
-    <None Remove="Images\delete.png" />
-    <None Remove="Images\edit.png" />
-    <None Remove="Images\placeholder.png" />
-    <None Remove="Images\placeholder_edit.png" />
-    <None Remove="Images\placeholder_small.png" />
-    <None Remove="Images\transfer.png" />
+    <None Remove="Resources\placeholder.png" />
+    <None Remove="Resources\placeholder_edit.png" />
+    <None Remove="Resources\placeholder_small.png" />
+    <None Remove="Resources\raktar.ttf" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Images\barcode.png" />
-    <EmbeddedResource Include="Images\delete.png" />
-    <EmbeddedResource Include="Images\edit.png" />
-    <EmbeddedResource Include="Images\placeholder.png" />
-    <EmbeddedResource Include="Images\placeholder_edit.png" />
-    <EmbeddedResource Include="Images\placeholder_small.png" />
-    <EmbeddedResource Include="Images\transfer.png" />
+    <EmbeddedResource Include="Resources\Images\placeholder.png" />
+    <EmbeddedResource Include="Resources\Images\placeholder_edit.png" />
+    <EmbeddedResource Include="Resources\Images\placeholder_small.png" />
+    <EmbeddedResource Include="Resources\Fonts\icons.ttf" />
   </ItemGroup>
 
   <ItemGroup>

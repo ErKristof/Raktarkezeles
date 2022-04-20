@@ -186,9 +186,9 @@ namespace Raktarkezeles.ViewModels
 
         public NewPartViewModel(Part newPart = null)
         {
-            manufacturers = PartContext.GetManufacturers();
-            categories = PartContext.GetCategories();
-            units = PartContext.GetUnits();
+            manufacturers = (List<Manufacturer>)PartContext.GetManufacturers();
+            categories = (List<Category>)PartContext.GetCategories();
+            units = (List<Unit>)PartContext.GetUnits();
             if (newPart != null)
             {
                 part = newPart;

@@ -18,6 +18,23 @@ namespace Raktarkezeles.ViewModels
 {
     public class MainViewModel : BindableBase
     {
+        private List<int> partIds = new List<int>();
+        private bool isRefreshing = false;
+        public bool IsRefreshing
+        {
+            get
+            {
+                return isRefreshing;
+            }
+            set
+            {
+                if(isRefreshing != value)
+                {
+                    isRefreshing = value;
+                }
+                OnPropertyChanged();
+            }
+        }
         private ObservableCollection<Part> parts = new ObservableCollection<Part>();
         public ObservableCollection<Part> Parts
         {
@@ -61,24 +78,26 @@ namespace Raktarkezeles.ViewModels
             }
         }
 
-        public ICommand GoToNewPartCommand { protected set; get; }
-        public ICommand GoToDetailsCommand { protected set; get; }
+        public ICommand GoToNewPartCommand { private set; get; }
+        public ICommand GoToDetailsCommand { private set; get; }
         public ICommand ScanBarcodeCommand { private set; get; }
+        public ICommand LoadItemsCommand { private set; get; }
+        public ICommand RefreshPartsCommand { private set; get; }
         public MainViewModel()
         {
             GoToDetailsCommand = new Command(GoToDetailsCommandExecute);
             GoToNewPartCommand = new Command(GoToNewPartCommandExecute);
             ScanBarcodeCommand = new Command(ScanBarcodeCommandExecute);
-            foreach(Part p in PartContext.GetParts())
-            {
-                Parts.Add(p);
-            }
+            LoadItemsCommand = new Command(LoadItemsCommandExecute);
+            RefreshPartsCommand = new Command(RefreshPartsCommandExecute);
+            partIds = PartContext.GetParts();
+            LoadItems();
         }
         private async void GoToDetailsCommandExecute()
         {
             if (selectedPart != null)
             {
-                DetailsViewModel detailsVM = new DetailsViewModel(selectedPart.Id);
+                DetailsViewModel detailsVM = new DetailsViewModel(selectedPart);
                 DetailsPage detailsPage = new DetailsPage();
                 detailsPage.BindingContext = detailsVM;
                 await Application.Current.MainPage.Navigation.PushAsync(detailsPage);
@@ -95,16 +114,20 @@ namespace Raktarkezeles.ViewModels
         private void SearchPartsCommandExecute(string input)
         {
             Parts.Clear();
-            var containedlist = PartContext.GetFilteredList(input);
-            foreach(Part p in containedlist)
+            partIds = PartContext.GetParts(input);
+            foreach(var id in partIds)
             {
-                Parts.Add(p);
+                Parts.Add(PartContext.GetPart(id));
             }
         }
         private async void ScanBarcodeCommandExecute()
         {
             MobileBarcodeScanner scanner = new MobileBarcodeScanner();
             Result result = await scanner.Scan();
+            if(result is null)
+            {
+                return;
+            }
             var filteredParts = parts.Where(p => p.ItemNumber.ToUpper().Contains(result.Text.ToUpper())).ToList();
             if(filteredParts.Count == 1)
             {
@@ -116,28 +139,45 @@ namespace Raktarkezeles.ViewModels
                 SearchText = result.Text;
             }
         }
+        private void LoadItemsCommandExecute()
+        {
+            LoadItems();
+        }
+        private void RefreshPartsCommandExecute()
+        {
+            IsRefreshing = true;
+            partIds.Clear();
+            Parts.Clear();
+            partIds = PartContext.GetParts(SearchText);
+            LoadItems();
+            IsRefreshing = false;
+        }
+        private void LoadItems()
+        {
+            int partsToLoadTo = partIds.Count < Parts.Count + 20 ? partIds.Count : Parts.Count + 20;
+            for (int i = Parts.Count; i < partsToLoadTo; i++)
+            {
+                Part newPart = PartContext.GetPart(partIds[i]);
+                newPart.Image = PartContext.GetPartPicture(partIds[i]);
+                newPart.Quantity = 0;
+                foreach(Occurrence o in newPart.Occurrences)
+                {
+                    newPart.Quantity += o.Quantity;
+                }
+                Parts.Add(newPart);
+            }
+        }
         public override void OnAppearing()
         {
             base.OnAppearing();
-            if (SearchText == "")
+            foreach(Part p in Parts)
             {
-                Parts.Clear();
-                foreach (Part p in PartContext.GetParts())
+                int sum = 0;
+                foreach(Occurrence o in p.Occurrences)
                 {
-                    Parts.Add(p);
+                    sum += o.Quantity;
                 }
-                foreach (Part p in Parts)
-                {
-                    if (p.Occurrences != null)
-                    {
-                        int sum = 0;
-                        foreach (Occurrence o in p.Occurrences)
-                        {
-                            sum += o.Quantity;
-                        }
-                        p.Quantity = sum;
-                    }
-                }
+                p.Quantity = sum;
             }
         }
     }

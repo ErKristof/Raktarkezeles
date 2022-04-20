@@ -12,7 +12,7 @@
     <ContentPage.Content>
         <ScrollView>
             <StackLayout VerticalOptions="FillAndExpand" BackgroundColor="White">
-                <ImageButton Source="{Binding Image, Converter={StaticResource byteToImage}, TargetNullValue={mvvm:ImageResource Raktarkezeles.Images.placeholder_edit.png}}"  Aspect="AspectFill" BackgroundColor="White" HeightRequest="240" Command="{Binding TakePictureCommand}"/>
+                <ImageButton Source="{Binding Image, Converter={StaticResource byteToImage}, TargetNullValue={mvvm:ImageResource Raktarkezeles.Resources.Images.placeholder_edit.png}}"  Aspect="AspectFill" BackgroundColor="White" HeightRequest="240" Command="{Binding TakePictureCommand}"/>
                 <StackLayout Padding="10,0,10,0">
                     <Label Text="Kép megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidImage}"/>
                     <Entry Placeholder="Név" Text="{Binding Name}" FontSize="20"/>
@@ -23,7 +23,7 @@
                     <Label Text="Típus megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidTypeNumber}"/>
                     <StackLayout Orientation="Horizontal">
                         <Entry Placeholder="Cikkszám" Text="{Binding ItemNumber}" HorizontalOptions="FillAndExpand" FontSize="20"/>
-                        <ImageButton Source="{mvvm:ImageResource Raktarkezeles.Images.barcode.png}" Aspect="AspectFit" HeightRequest="45"  HorizontalOptions="End" VerticalOptions="Center" Padding="5,0,5,5" Command="{Binding ScanBarcodeCommand}" BackgroundColor="White"/>
+                        <Button Text="{x:StaticResource IconBarcode}" FontFamily="Icons" BackgroundColor="White" FontSize="30" HeightRequest="45" WidthRequest="60" HorizontalOptions="End" VerticalOptions="Center" Padding="5,0,5,5" Command="{Binding ScanBarcodeCommand}"/>
                     </StackLayout>
                     <Label Text="Cikkszám megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidItemNumber}"/>
                     <Picker Title="Mennyiségi egység" ItemsSource="{Binding Units}" ItemDisplayBinding="{Binding FullName}" SelectedItem="{Binding Unit}" FontSize="20"/>

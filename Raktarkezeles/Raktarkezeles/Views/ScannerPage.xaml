@@ -5,7 +5,7 @@
              x:Class="Raktarkezeles.Views.ScannerPage">
     <ContentPage.Content>
         <StackLayout>
-            <zxing:ZXingScannerView IsScanning="True" ScanResultCommand="{Binding ScanResultCommand}"/>
+            <zxing:ZXingScannerView IsScanning="True" VerticalOptions="Center"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

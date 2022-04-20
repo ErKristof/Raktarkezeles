@@ -14,14 +14,22 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.ToolbarItems>
-        <ToolbarItem IconImageSource="{mvvm:ImageResource Raktarkezeles.Images.edit.png}" Order="Primary"  Priority="0" Command="{Binding EditPartCommand}"/>
-        <ToolbarItem IconImageSource="{mvvm:ImageResource Raktarkezeles.Images.delete.png}" Order="Primary" Priority="1" Command="{Binding DeletePartCommand}"/>
+        <ToolbarItem Order="Primary"  Priority="0" Command="{Binding EditPartCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="Icons" Glyph="{x:StaticResource IconEdit}" />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem Order="Primary" Priority="1" Command="{Binding DeletePartCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="Icons" Glyph="{x:StaticResource IconDelete}" />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <CollectionView SelectionMode="None" ItemsSource="{Binding Occurrences}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="White">
             <CollectionView.Header>
                 <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" x:DataType="viewmodel:DetailsViewModel" >
-                    <Image Source="{Binding Image, Converter={StaticResource byteToImage}, TargetNullValue={mvvm:ImageResource Raktarkezeles.Images.placeholder.png}}" Aspect="AspectFill" HeightRequest="240"/>
+                    <Image Source="{Binding Image, Converter={StaticResource byteToImage}, TargetNullValue={mvvm:ImageResource Raktarkezeles.Resources.Images.placeholder.png}}" Aspect="AspectFill" HeightRequest="240"/>
                     <StackLayout Orientation="Horizontal" Padding="5,5,5,5" HorizontalOptions="Fill" VerticalOptions="Fill">
                         <Label Text="{Binding Name}" FontSize="24" FontAttributes="Bold" TextColor="Black" LineBreakMode="TailTruncation" VerticalOptions="End" HorizontalOptions="FillAndExpand"/>
                         <Label Text="{Binding Manufacturer.Name}" FontSize="14" TextColor="Black" LineBreakMode="TailTruncation" VerticalOptions="End" HorizontalOptions="EndAndExpand" HorizontalTextAlignment="End"/>
@@ -37,7 +45,11 @@
                     <SwipeView VerticalOptions="Fill" HorizontalOptions="Fill" HeightRequest="75">
                         <SwipeView.RightItems>
                             <SwipeItems>
-                                <SwipeItem IconImageSource="{mvvm:ImageResource Raktarkezeles.Images.delete.png}" BackgroundColor="Red" Command="{Binding BindingContext.DeleteOccurrenceCommnad, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
+                                <SwipeItem BackgroundColor="Red" Command="{Binding BindingContext.DeleteOccurrenceCommnad, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}">
+                                    <SwipeItem.IconImageSource>
+                                        <FontImageSource FontFamily="Icons" Glyph="{x:StaticResource IconDelete}" Color="White"/>
+                                    </SwipeItem.IconImageSource>
+                                </SwipeItem>
                             </SwipeItems>
                         </SwipeView.RightItems>
                         <Grid BackgroundColor="White" VerticalOptions="Fill" HorizontalOptions="Fill" Padding="5">
@@ -57,7 +69,7 @@
                                 <Button Text="-" FontSize="24" FontAttributes="Bold" WidthRequest="50" BackgroundColor="White" TextColor="Black" Command="{Binding BindingContext.MinusOneCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
                                 <Button Text="{Binding Quantity}" FontSize="16" WidthRequest="75" BackgroundColor="White" TextColor="Black" Command="{Binding BindingContext.ChangeQuantityCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
                                 <Button Text="+" FontSize="24" FontAttributes="Bold" WidthRequest="50" BackgroundColor="White" TextColor="Black" Command="{Binding BindingContext.PlusOneCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
-                                <ImageButton Source="{mvvm:ImageResource Raktarkezeles.Images.transfer.png}" Padding="7,7,7,0" WidthRequest="50" BackgroundColor="White" Command="{Binding BindingContext.TransferQuantityCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
+                                <Button Text="{x:StaticResource IconTransfer}" FontFamily="Icons" FontSize="30" BackgroundColor="White" Padding="7,7,7,0" WidthRequest="50" Command="{Binding BindingContext.TransferQuantityCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
                             </StackLayout>
                         </Grid>
                     </SwipeView>

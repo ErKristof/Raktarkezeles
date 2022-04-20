@@ -3,6 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Raktarkezeles.App">
     <Application.Resources>
-
+        <ResourceDictionary>
+            <x:String x:Key="IconDelete">&#xe900;</x:String>
+            <x:String x:Key="IconEdit">&#xe901;</x:String>
+            <x:String x:Key="IconTransfer">&#xe902;</x:String>
+            <x:String x:Key="IconBarcode">&#xe903;</x:String>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

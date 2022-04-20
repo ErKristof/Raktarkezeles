@@ -129,9 +129,10 @@ namespace Raktarkezeles.ViewModels
         public ICommand PlusOneCommand { protected set; get; }
         public ICommand ChangeQuantityCommand { private set; get; }
         public ICommand DeleteOccurrenceCommnad { protected set; get; }
-        public DetailsViewModel(int partId)
+        public DetailsViewModel(Part part)
         {
-            part = PartContext.GetPart(partId);
+            this.part = part;
+            UpdatePage();
             EditPartCommand = new Command(EditPartCommandExecute);
             DeletePartCommand = new Command(DeletePartCommandExecute);
             NewOccurrenceCommand = new Command(NewOccurrenceCommandExecute);
@@ -150,7 +151,7 @@ namespace Raktarkezeles.ViewModels
         }
         private async void DeletePartCommandExecute()
         {
-            PartContext.DeletePart(part);
+            PartContext.DeletePart(part.Id);
             await Application.Current.MainPage.Navigation.PopAsync();
         }
         private async void NewOccurrenceCommandExecute()
@@ -162,7 +163,7 @@ namespace Raktarkezeles.ViewModels
         }
         private async void TransferQuantityCommandExecute(int id)
         {
-            TransferQuantityViewModel transferQuantityVM = new TransferQuantityViewModel(Occurrences.FirstOrDefault(o => o.Id == id).Id);
+            TransferQuantityViewModel transferQuantityVM = new TransferQuantityViewModel(Occurrences.FirstOrDefault(o => o.Id == id).Id, part);
             TransferQuantityPage transferQuantityPage = new TransferQuantityPage();
             transferQuantityPage.BindingContext = transferQuantityVM;
             await Application.Current.MainPage.Navigation.PushModalAsync(transferQuantityPage);
@@ -176,14 +177,16 @@ namespace Raktarkezeles.ViewModels
         }
         private void MinusOneCommandExecute(int id)
         {
-            if (Occurrences.Where(o => o.Id == id).First().Quantity > 0)
+            int currentQuantity = Occurrences.First(o => o.Id == id).Quantity;
+            if (currentQuantity > 0)
             {
-                PartContext.ChangeQuantity(id, -1);
+                PartContext.ChangeQuantity(id, currentQuantity - 1);
             }
         }
         private void PlusOneCommandExecute(int id)
         {
-            PartContext.ChangeQuantity(id, 1);
+            int currentQuantity = Occurrences.First(o => o.Id == id).Quantity;
+            PartContext.ChangeQuantity(id, currentQuantity + 1);
         }
         private void DeleteOccurrenceCommandExecute(int id)
         {
@@ -192,7 +195,6 @@ namespace Raktarkezeles.ViewModels
         public override void OnAppearing()
         {
             base.OnAppearing();
-            part = PartContext.GetPart(part.Id);
             UpdatePage();
         }
         private void UpdatePage()

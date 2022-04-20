@@ -10,7 +10,7 @@ namespace Raktarkezeles
     {
         public App()
         {
-            Xamarin.Forms.Application.Current.On<Xamarin.Forms.PlatformConfiguration.Android>().UseWindowSoftInputModeAdjust(WindowSoftInputModeAdjust.Resize);
+            Current.On<Xamarin.Forms.PlatformConfiguration.Android>().UseWindowSoftInputModeAdjust(WindowSoftInputModeAdjust.Resize);
             InitializeComponent();
 
             MainPage = new NavigationPage(new MainPage());
