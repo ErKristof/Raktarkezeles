@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raktarkezeles.iOS", "Raktar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Raktarkezeles", "Raktarkezeles\Raktarkezeles\Raktarkezeles.csproj", "{F116A4DD-A3B0-4488-B22E-6AA55456CFD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raktarkezeles.API", "Raktarkezeles.API\Raktarkezeles.API.csproj", "{D03ED5AE-0F81-4699-AC57-1866C9745791}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Raktarkezeles.API", "Raktarkezeles.API\Raktarkezeles.API.csproj", "{D03ED5AE-0F81-4699-AC57-1866C9745791}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
