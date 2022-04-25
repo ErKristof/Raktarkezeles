@@ -10,7 +10,7 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
-        <ScrollView>
+        <ScrollView VerticalScrollBarVisibility="Never">
             <StackLayout VerticalOptions="FillAndExpand" BackgroundColor="White">
                 <ImageButton Source="{Binding Image, Converter={StaticResource byteToImage}, TargetNullValue={mvvm:ImageResource Raktarkezeles.Resources.Images.placeholder_edit.png}}"  Aspect="AspectFill" BackgroundColor="White" HeightRequest="240" Command="{Binding TakePictureCommand}"/>
                 <StackLayout Padding="10,0,10,0">
@@ -21,10 +21,14 @@
                     <Label Text="Gyártó megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidManufacturer}" />
                     <Entry Placeholder="Típus" Text="{Binding TypeNumber}" FontSize="20"/>
                     <Label Text="Típus megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidTypeNumber}"/>
-                    <StackLayout Orientation="Horizontal">
-                        <Entry Placeholder="Cikkszám" Text="{Binding ItemNumber}" HorizontalOptions="FillAndExpand" FontSize="20"/>
-                        <Button Text="{x:StaticResource IconBarcode}" FontFamily="Icons" BackgroundColor="White" FontSize="30" HeightRequest="45" WidthRequest="60" HorizontalOptions="End" VerticalOptions="Center" Padding="5,0,5,5" Command="{Binding ScanBarcodeCommand}"/>
-                    </StackLayout>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="85*"/>
+                            <ColumnDefinition Width="20*"/>
+                        </Grid.ColumnDefinitions>
+                        <Entry Grid.Column="0" Placeholder="Cikkszám" Text="{Binding ItemNumber}" HorizontalOptions="FillAndExpand" FontSize="20"/>
+                        <Button Grid.Column="1" Text="{x:StaticResource IconBarcode}" FontFamily="Icons" BackgroundColor="White" FontSize="30" HeightRequest="45" WidthRequest="60" HorizontalOptions="End" VerticalOptions="Center" Padding="5,0,5,5" Command="{Binding ScanBarcodeCommand}"/>
+                    </Grid>
                     <Label Text="Cikkszám megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidItemNumber}"/>
                     <Picker Title="Mennyiségi egység" ItemsSource="{Binding Units}" ItemDisplayBinding="{Binding FullName}" SelectedItem="{Binding Unit}" FontSize="20"/>
                     <Label Text="Mennyiségi egység megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidUnit}" />

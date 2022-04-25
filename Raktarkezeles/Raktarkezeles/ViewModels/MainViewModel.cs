@@ -92,6 +92,29 @@ namespace Raktarkezeles.ViewModels
             RefreshPartsCommand = new Command(RefreshPartsCommandExecute);
             partIds = PartContext.GetParts();
             LoadItems();
+            MessagingCenter.Subscribe<DetailsViewModel, Part>(this, "Updated", (vm, changedPart) =>
+            {
+                for (int i = 0; i < parts.Count; i++)
+                {
+                    if (Parts[i].Id == changedPart.Id)
+                    {
+                        Parts[i] = changedPart;
+                    }
+                }
+            });
+            MessagingCenter.Subscribe<DetailsViewModel, int>(this, "Deleted", (vm, id) =>
+            {
+                partIds.Remove(id);
+                Parts.Remove(Parts.First(x => x.Id == id));
+            });
+            MessagingCenter.Subscribe<NewPartViewModel, Part>(this, "New", (vm, newPart) =>
+            {
+                partIds.Add(newPart.Id);
+                if(Parts.Count + 20 > partIds.Count)
+                {
+                    LoadItems();
+                }
+            });
         }
         private async void GoToDetailsCommandExecute()
         {
@@ -159,26 +182,12 @@ namespace Raktarkezeles.ViewModels
             {
                 Part newPart = PartContext.GetPart(partIds[i]);
                 newPart.Image = PartContext.GetPartPicture(partIds[i]);
-                newPart.Quantity = 0;
-                foreach(Occurrence o in newPart.Occurrences)
-                {
-                    newPart.Quantity += o.Quantity;
-                }
                 Parts.Add(newPart);
             }
         }
         public override void OnAppearing()
         {
             base.OnAppearing();
-            foreach(Part p in Parts)
-            {
-                int sum = 0;
-                foreach(Occurrence o in p.Occurrences)
-                {
-                    sum += o.Quantity;
-                }
-                p.Quantity = sum;
-            }
         }
     }
 }

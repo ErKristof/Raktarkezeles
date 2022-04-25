@@ -8,6 +8,9 @@
              x:Class="Raktarkezeles.Views.MainPage"
              Title="Raktárkezelés" NavigationPage.HasNavigationBar="False"
              BackgroundColor="White">
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness" iOS="0,35,0,0"/>
+    </ContentPage.Padding>
     <ContentPage.BindingContext>
         <viewmodels:MainViewModel/>
     </ContentPage.BindingContext>
@@ -39,7 +42,7 @@
                         <ColumnDefinition Width="15*"/>
                     </Grid.ColumnDefinitions>
                     <SearchBar Grid.Column="0" Text="{Binding SearchText}" Placeholder="Keresés..." HorizontalOptions="Start"/>
-                    <Button Grid.Column="1" Text="{x:StaticResource IconBarcode}" BackgroundColor="White" FontFamily="Icons" FontSize="28" HorizontalOptions="End" Command="{Binding ScanBarcodeCommand}"/>
+                    <Button Grid.Column="1" Text="{x:StaticResource IconBarcode}" TextColor="Black" BackgroundColor="White" FontFamily="Icons" FontSize="28" HorizontalOptions="End" Command="{Binding ScanBarcodeCommand}"/>
                 </Grid>
                 <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshPartsCommand}">
                     <CollectionView ItemsSource="{Binding Parts}" EmptyView="Nincsenek alkatrészek a listában" SelectedItem="{Binding SelectedPart}" SelectionChangedCommand="{Binding GoToDetailsCommand}" SelectionMode="Single" Background="White" RemainingItemsThreshold="5" RemainingItemsThresholdReachedCommand="{Binding LoadItemsCommand}">

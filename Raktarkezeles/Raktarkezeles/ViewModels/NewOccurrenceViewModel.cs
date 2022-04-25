@@ -75,6 +75,7 @@ namespace Raktarkezeles.ViewModels
                 occurrence.Shelf = int.Parse(shelf);
                 occurrence.Quantity = int.Parse(quantity);
                 PartContext.AddOccurrence(occurrence);
+                MessagingCenter.Send(this, "NewOccurrence", occurrence);
                 await Application.Current.MainPage.Navigation.PopModalAsync();
             }
         }

@@ -7,7 +7,8 @@
              x:DataType="viewmodel:DetailsViewModel"
              x:Class="Raktarkezeles.Views.DetailsPage"
              NavigationPage.HasBackButton="True"
-             x:Name="MyPage">
+             x:Name="MyPage"
+             Title="">
     <ContentPage.Resources>
         <ResourceDictionary>
             <mvvm:ByteToImageConverter x:Key="byteToImage"/>
@@ -69,7 +70,7 @@
                                 <Button Text="-" FontSize="24" FontAttributes="Bold" WidthRequest="50" BackgroundColor="White" TextColor="Black" Command="{Binding BindingContext.MinusOneCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
                                 <Button Text="{Binding Quantity}" FontSize="16" WidthRequest="75" BackgroundColor="White" TextColor="Black" Command="{Binding BindingContext.ChangeQuantityCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
                                 <Button Text="+" FontSize="24" FontAttributes="Bold" WidthRequest="50" BackgroundColor="White" TextColor="Black" Command="{Binding BindingContext.PlusOneCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
-                                <Button Text="{x:StaticResource IconTransfer}" FontFamily="Icons" FontSize="30" BackgroundColor="White" Padding="7,7,7,0" WidthRequest="50" Command="{Binding BindingContext.TransferQuantityCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
+                                <Button Text="{x:StaticResource IconTransfer}" FontFamily="Icons" FontSize="30" BackgroundColor="White" TextColor="Black" Padding="7,7,7,0" WidthRequest="50" Command="{Binding BindingContext.TransferQuantityCommand, Source={x:Reference Name=MyPage}}" CommandParameter="{Binding Id}"/>
                             </StackLayout>
                         </Grid>
                     </SwipeView>

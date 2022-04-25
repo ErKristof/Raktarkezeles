@@ -141,6 +141,7 @@ namespace Raktarkezeles.ViewModels
             PlusOneCommand = new Command<int>(PlusOneCommandExecute);
             DeleteOccurrenceCommnad = new Command<int>(DeleteOccurrenceCommandExecute);
             ChangeQuantityCommand = new Command<int>(ChangeQuantityCommandExecute);
+            
         }
         private async void EditPartCommandExecute()
         {
@@ -151,11 +152,17 @@ namespace Raktarkezeles.ViewModels
         }
         private async void DeletePartCommandExecute()
         {
+            MessagingCenter.Send(this, "Deleted", part.Id);
             PartContext.DeletePart(part.Id);
             await Application.Current.MainPage.Navigation.PopAsync();
         }
         private async void NewOccurrenceCommandExecute()
         {
+            MessagingCenter.Subscribe<NewOccurrenceViewModel, Occurrence>(this, "NewOccurrence", (vm, newOccurrence) =>
+            {
+                Occurrences.Add(newOccurrence);
+                MessagingCenter.Unsubscribe<NewOccurrenceViewModel, Occurrence>(this, "NewOccurrence");
+            });
             NewOccurrenceViewModel newOccurrenceVM = new NewOccurrenceViewModel(part.Id);
             NewOccurrencePage newOccurrencePage = new NewOccurrencePage();
             newOccurrencePage.BindingContext = newOccurrenceVM;
@@ -190,12 +197,17 @@ namespace Raktarkezeles.ViewModels
         }
         private void DeleteOccurrenceCommandExecute(int id)
         {
+            Occurrences.Remove(Occurrences.First(x => x.Id == id));
             PartContext.DeleteOccurrence(id);
         }
         public override void OnAppearing()
         {
             base.OnAppearing();
             UpdatePage();
+        }
+        public void OnDisappearing()
+        {
+            MessagingCenter.Send(this, "Updated", part);
         }
         private void UpdatePage()
         {

@@ -23,5 +23,10 @@ namespace Raktarkezeles.Views
             base.OnAppearing();
             (BindingContext as DetailsViewModel).OnAppearing();
         }
+        protected override void OnDisappearing()
+        {
+            (BindingContext as DetailsViewModel).OnDisappearing();
+            base.OnDisappearing();
+        }
     }
 }

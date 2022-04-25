@@ -15,7 +15,7 @@ namespace Raktarkezeles.DAL
         public static ICollection<Warehouse> warehouses = new List<Warehouse>();
         public static ICollection<Part> parts = new ObservableCollection<Part>();
         public static ICollection<Occurrence> occurrences = new ObservableCollection<Occurrence>();
-        public static int latestPartId = 1;
+        public static int latestPartId = 21;
         public static int latestOccurrenceId = 1;
 
         static PartContext()
@@ -34,10 +34,6 @@ namespace Raktarkezeles.DAL
 
             warehouses.Add(new Warehouse() { Id = 0, Name = "Iroda" });
             warehouses.Add(new Warehouse() { Id = 1, Name = "Raktár" });
-
-            
-            occurrences.Add(new Occurrence() { Id = 0, PartId = 0, Quantity = 123, Rack = 2, Shelf = 3, WarehouseId = 1, Warehouse=warehouses.ElementAt(1) });
-            parts.Add(new Part() { Id = 0, CategoryId = 1, ItemNumber = "1231231231", ManufacturerId = 1, Name = "Sorkapocss", Description = "valami leírás", UnitId = 1, TypeNumber = "012012012", Category = categories.ElementAt(1), Unit = units.ElementAt(1), Manufacturer = manufacturers.ElementAt(1), Occurrences = new ObservableCollection<Occurrence>() });
 
         }
         //GET Alkatrészek
@@ -84,11 +80,12 @@ namespace Raktarkezeles.DAL
         }
         //POST Alkatrész
         //megkapja az alkatrészt és visszaadja azt ha sikeres a feltöltés
-        public static void AddPart(Part newPart)
+        public static Part AddPart(Part newPart)
         {
             newPart.Id = latestPartId;
             latestPartId++;
             parts.Add(newPart);
+            return newPart;
         }
         //PUT Alkatrész
         //Megkapja a módosított alkatrész és visszaadja azt

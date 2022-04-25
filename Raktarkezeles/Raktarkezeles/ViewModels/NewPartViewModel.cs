@@ -227,10 +227,10 @@ namespace Raktarkezeles.ViewModels
                     Category = Category,
                     CategoryId = Category.Id,
                     Description = Description,
-                    Occurrences = new ObservableCollection<Occurrence>(),
-                    Quantity = 0
+                    Occurrences = new ObservableCollection<Occurrence>()
                 };
-                PartContext.AddPart(newPart);
+                newPart = PartContext.AddPart(newPart);
+                MessagingCenter.Send(this, "New", newPart);
                 await Application.Current.MainPage.Navigation.PopAsync();
             }
         }
@@ -297,7 +297,7 @@ namespace Raktarkezeles.ViewModels
         }
         private bool CheckValidation()
         {
-            InvalidImage = Image == null;
+            //InvalidImage = Image == null;
             InvalidName = string.IsNullOrWhiteSpace(Name);
             InvalidManufacturer = Manufacturer == null;
             InvalidTypeNumber = string.IsNullOrWhiteSpace(TypeNumber);

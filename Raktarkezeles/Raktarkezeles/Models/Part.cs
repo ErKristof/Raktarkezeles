@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using Raktarkezeles.MVVM;
+using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace Raktarkezeles.Models
 {
@@ -20,21 +22,7 @@ namespace Raktarkezeles.Models
         public Unit Unit { get; set; }
         public string Description { get; set; }
         public byte[] Image { get; set; }
-        private int quantity;
-        public int Quantity {
-            get
-            {
-                return quantity;
-            }
-            set
-            {
-                if(quantity != value)
-                {
-                    quantity = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        public int Quantity => Occurrences.Sum(x => x.Quantity);
         public ICollection<Occurrence> Occurrences { get; set; }
     }
 }
