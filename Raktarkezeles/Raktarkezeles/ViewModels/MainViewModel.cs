@@ -9,16 +9,19 @@ using Raktarkezeles.Models;
 using Raktarkezeles.Views;
 using Xamarin.Forms;
 using System.Windows.Input;
-using Raktarkezeles.DAL;
 using Raktarkezeles.MVVM;
 using ZXing.Mobile;
 using ZXing;
+using Raktarkezeles.Services;
+using System.Threading.Tasks;
 
 namespace Raktarkezeles.ViewModels
 {
     public class MainViewModel : BindableBase
     {
+        private RaktarkezelesService service = new RaktarkezelesService();
         private List<int> partIds = new List<int>();
+        private int partsLoading = 0;
         private bool isRefreshing = false;
         public bool IsRefreshing
         {
@@ -35,8 +38,8 @@ namespace Raktarkezeles.ViewModels
                 OnPropertyChanged();
             }
         }
-        private ObservableCollection<Part> parts = new ObservableCollection<Part>();
-        public ObservableCollection<Part> Parts
+        private ObservableCollection<Alkatresz> parts = new ObservableCollection<Alkatresz>();
+        public ObservableCollection<Alkatresz> Parts
         {
             get
             {
@@ -47,8 +50,8 @@ namespace Raktarkezeles.ViewModels
                 parts = value;
             }
         }
-        private Part selectedPart;
-        public Part SelectedPart
+        private Alkatresz selectedPart;
+        public Alkatresz SelectedPart
         {
             get
             {
@@ -90,30 +93,15 @@ namespace Raktarkezeles.ViewModels
             ScanBarcodeCommand = new Command(ScanBarcodeCommandExecute);
             LoadItemsCommand = new Command(LoadItemsCommandExecute);
             RefreshPartsCommand = new Command(RefreshPartsCommandExecute);
-            partIds = PartContext.GetParts();
-            LoadItems();
-            MessagingCenter.Subscribe<DetailsViewModel, Part>(this, "Updated", (vm, changedPart) =>
+            GetPartIds();
+            MessagingCenter.Subscribe<DetailsViewModel, Alkatresz>(this, "Updated", (vm, changedPart) =>
             {
-                for (int i = 0; i < parts.Count; i++)
-                {
-                    if (Parts[i].Id == changedPart.Id)
-                    {
-                        Parts[i] = changedPart;
-                    }
-                }
+                changedPart.MennyisegChanged();
             });
             MessagingCenter.Subscribe<DetailsViewModel, int>(this, "Deleted", (vm, id) =>
             {
                 partIds.Remove(id);
                 Parts.Remove(Parts.First(x => x.Id == id));
-            });
-            MessagingCenter.Subscribe<NewPartViewModel, Part>(this, "New", (vm, newPart) =>
-            {
-                partIds.Add(newPart.Id);
-                if(Parts.Count + 20 > partIds.Count)
-                {
-                    LoadItems();
-                }
             });
         }
         private async void GoToDetailsCommandExecute()
@@ -136,12 +124,7 @@ namespace Raktarkezeles.ViewModels
         }
         private void SearchPartsCommandExecute(string input)
         {
-            Parts.Clear();
-            partIds = PartContext.GetParts(input);
-            foreach(var id in partIds)
-            {
-                Parts.Add(PartContext.GetPart(id));
-            }
+            
         }
         private async void ScanBarcodeCommandExecute()
         {
@@ -151,7 +134,7 @@ namespace Raktarkezeles.ViewModels
             {
                 return;
             }
-            var filteredParts = parts.Where(p => p.ItemNumber.ToUpper().Contains(result.Text.ToUpper())).ToList();
+            var filteredParts = parts.Where(p => p.Cikkszam.ToUpper().Contains(result.Text.ToUpper())).ToList();
             if(filteredParts.Count == 1)
             {
                 SelectedPart = filteredParts[0];
@@ -162,28 +145,47 @@ namespace Raktarkezeles.ViewModels
                 SearchText = result.Text;
             }
         }
-        private void LoadItemsCommandExecute()
+        private async void LoadItemsCommandExecute()
         {
-            LoadItems();
+            await LoadItems();
         }
         private void RefreshPartsCommandExecute()
         {
             IsRefreshing = true;
             partIds.Clear();
             Parts.Clear();
-            partIds = PartContext.GetParts(SearchText);
-            LoadItems();
+            partsLoading = 0;
+            GetPartIds();
             IsRefreshing = false;
         }
-        private void LoadItems()
+        private async Task LoadItems()
         {
-            int partsToLoadTo = partIds.Count < Parts.Count + 20 ? partIds.Count : Parts.Count + 20;
+            int loadingValue = 20;
+            int partsToLoadTo = 0;
+            if(partsLoading == 0)
+            {
+                partsToLoadTo = partIds.Count < loadingValue ? partIds.Count : loadingValue;
+            }
+            else if(parts.Count < partsLoading || partsLoading == partIds.Count)
+            {
+                return;
+            }
+            else
+            {
+                partsToLoadTo = partIds.Count < partsLoading + loadingValue ? partIds.Count : partsLoading + loadingValue;
+            }
+            partsLoading = partsToLoadTo;
             for (int i = Parts.Count; i < partsToLoadTo; i++)
             {
-                Part newPart = PartContext.GetPart(partIds[i]);
-                newPart.Image = PartContext.GetPartPicture(partIds[i]);
-                Parts.Add(newPart);
+                Alkatresz newAlkatresz = await service.GetAlkatresz(partIds[i]);
+                Parts.Add(newAlkatresz);
             }
+
+        }
+        private async void GetPartIds(string kereses = "")
+        {
+            partIds = await service.GetAlkatreszek(kereses);
+            await LoadItems();
         }
         public override void OnAppearing()
         {

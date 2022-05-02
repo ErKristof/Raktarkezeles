@@ -8,20 +8,22 @@ using Raktarkezeles.DAL;
 using System.Windows.Input;
 using Raktarkezeles.MVVM;
 using System.Linq;
+using Raktarkezeles.Services;
 
 namespace Raktarkezeles.ViewModels
 {
     public class TransferQuantityViewModel : BindableBase
     {
-        public Occurrence FromOccurrence { get; set; }
-        private List<Occurrence> occurrences;
-        public List<Occurrence> Occurrences
+        private RaktarkezelesService service = new RaktarkezelesService();
+        public AlkatreszElofordulas FromOccurrence { get; set; }
+        private List<AlkatreszElofordulas> occurrences;
+        public List<AlkatreszElofordulas> Occurrences
         {
             get { return occurrences; }
             set { occurrences = value; OnPropertyChanged();}
         }
-        private Occurrence pickedOccurrence;
-        public Occurrence PickedOccurrence
+        private AlkatreszElofordulas pickedOccurrence;
+        public AlkatreszElofordulas PickedOccurrence
         {
             get { return pickedOccurrence; }
             set { pickedOccurrence = value; OnPropertyChanged(); }
@@ -36,10 +38,10 @@ namespace Raktarkezeles.ViewModels
         public bool InvalidQuantity { get { return invalidQuantity; } set { invalidQuantity = value; OnPropertyChanged(); } }
         public ICommand SaveTransferCommand { protected set; get; }
         public ICommand CancelTransferCommand { protected set; get; }
-        public TransferQuantityViewModel(int occurrenceId, Part part)
+        public TransferQuantityViewModel(int occurrenceId, Alkatresz part)
         {
-            FromOccurrence = part.Occurrences.Where(x => x.Id == occurrenceId).DefaultIfEmpty(null).First();
-            Occurrences = part.Occurrences.Where(p => p.Id != occurrenceId).ToList();
+            FromOccurrence = part.AlkatreszElofordulasok.Where(x => x.Id == occurrenceId).DefaultIfEmpty(null).First();
+            Occurrences = part.AlkatreszElofordulasok.Where(p => p.Id != occurrenceId).ToList();
             SaveTransferCommand = new Command(SaveTransferCommandExecute);
             CancelTransferCommand = new Command(CancelTransferCommandExecute);
         }
@@ -47,8 +49,15 @@ namespace Raktarkezeles.ViewModels
         {
             if (!CheckValidation())
             {
-                PartContext.ChangeQuantity(FromOccurrence.Id, FromOccurrence.Quantity - int.Parse(quantity));
-                PartContext.ChangeQuantity(pickedOccurrence.Id, pickedOccurrence.Quantity + int.Parse(quantity));
+                int mennyiseg = int.Parse(quantity);
+                if (await service.ChangeQuantity(FromOccurrence.Id, FromOccurrence.Mennyiseg - mennyiseg))
+                {
+                    if (await service.ChangeQuantity(pickedOccurrence.Id, pickedOccurrence.Mennyiseg + mennyiseg))
+                    {
+                        FromOccurrence.Mennyiseg -= mennyiseg;
+                        pickedOccurrence.Mennyiseg += mennyiseg;
+                    }
+                }
                 await Application.Current.MainPage.Navigation.PopModalAsync();
             }
         }
@@ -62,7 +71,7 @@ namespace Raktarkezeles.ViewModels
             InvalidQuantity = !int.TryParse(Quantity, out result);
             if (!InvalidQuantity)
             {
-                InvalidQuantity = FromOccurrence.Quantity - result < 0 || result < 0;
+                InvalidQuantity = FromOccurrence.Mennyiseg - result < 0 || result < 0;
             }
             
             return InvalidQuantity;

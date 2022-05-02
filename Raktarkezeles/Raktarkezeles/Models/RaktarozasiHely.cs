@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Raktarkezeles.Models
 {
-    public class Manufacturer
+    public class RaktarozasiHely
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string Nev { get; set; }
     }
 }

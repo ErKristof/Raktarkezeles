@@ -9,31 +9,31 @@ namespace Raktarkezeles.DAL
 {
     public static class PartContext
     {
-        public static ICollection<Manufacturer> manufacturers = new List<Manufacturer>();
-        public static ICollection<Category> categories = new List<Category>();
-        public static ICollection<Unit> units = new List<Unit>();
-        public static ICollection<Warehouse> warehouses = new List<Warehouse>();
-        public static ICollection<Part> parts = new ObservableCollection<Part>();
-        public static ICollection<Occurrence> occurrences = new ObservableCollection<Occurrence>();
+        public static ICollection<Gyarto> manufacturers = new List<Gyarto>();
+        public static ICollection<Kategoria> categories = new List<Kategoria>();
+        public static ICollection<MennyisegiEgyseg> units = new List<MennyisegiEgyseg>();
+        public static ICollection<RaktarozasiHely> warehouses = new List<RaktarozasiHely>();
+        public static ICollection<Alkatresz> parts = new ObservableCollection<Alkatresz>();
+        public static ICollection<AlkatreszElofordulas> occurrences = new ObservableCollection<AlkatreszElofordulas>();
         public static int latestPartId = 21;
         public static int latestOccurrenceId = 1;
 
         static PartContext()
         {
-            manufacturers.Add(new Manufacturer() { Id = 0, Name = "Siemens" });
-            manufacturers.Add(new Manufacturer() { Id = 1, Name = "Phoenix Contact" });
-            manufacturers.Add(new Manufacturer() { Id = 2, Name = "WAGO" });
+            manufacturers.Add(new Gyarto() { Id = 0, TeljesNev = "Siemens" });
+            manufacturers.Add(new Gyarto() { Id = 1, TeljesNev = "Phoenix Contact" });
+            manufacturers.Add(new Gyarto() { Id = 2, TeljesNev = "WAGO" });
 
-            units.Add(new Unit() { Id = 0, FullName = "Darab", ShortName = "db" });
-            units.Add(new Unit() { Id = 1, FullName = "Méter", ShortName = "m" });
+            units.Add(new MennyisegiEgyseg() { Id = 0, TeljesNev = "Darab", RovidNev = "db" });
+            units.Add(new MennyisegiEgyseg() { Id = 1, TeljesNev = "Méter", RovidNev = "m" });
 
-            categories.Add(new Category() { Id = 0, Name = "Sorkapocs" });
-            categories.Add(new Category() { Id = 1, Name = "Tápegység" });
-            categories.Add(new Category() { Id = 2, Name = "Sorkapocs véglap" });
-            categories.Add(new Category() { Id = 3, Name = "Egyéb" });
+            categories.Add(new Kategoria() { Id = 0, Nev = "Sorkapocs" });
+            categories.Add(new Kategoria() { Id = 1, Nev = "Tápegység" });
+            categories.Add(new Kategoria() { Id = 2, Nev = "Sorkapocs véglap" });
+            categories.Add(new Kategoria() { Id = 3, Nev = "Egyéb" });
 
-            warehouses.Add(new Warehouse() { Id = 0, Name = "Iroda" });
-            warehouses.Add(new Warehouse() { Id = 1, Name = "Raktár" });
+            warehouses.Add(new RaktarozasiHely() { Id = 0, Nev = "Iroda" });
+            warehouses.Add(new RaktarozasiHely() { Id = 1, Nev = "Raktár" });
 
         }
         //GET Alkatrészek
@@ -44,7 +44,7 @@ namespace Raktarkezeles.DAL
             List<int> partIds = new List<int>();
             if(search == "")
             {
-                foreach(Part p in parts)
+                foreach(Alkatresz p in parts)
                 {
                     partIds.Add(p.Id);
                 }
@@ -52,8 +52,8 @@ namespace Raktarkezeles.DAL
             else
             {
                 search = search.ToUpper();
-                var filteredParts = parts.Where(p => p.Name.ToUpper().Contains(search) || p.Category.Name.ToUpper().Contains(search) || p.Manufacturer.Name.ToUpper().Contains(search) || p.ItemNumber.ToUpper().Contains(search) || p.TypeNumber.ToUpper().Contains(search)).ToList();
-                foreach (Part p in filteredParts)
+                var filteredParts = parts.Where(p => p.Nev.ToUpper().Contains(search) || p.Kategoria.Nev.ToUpper().Contains(search) || p.Gyarto.TeljesNev.ToUpper().Contains(search) || p.Cikkszam.ToUpper().Contains(search) || p.Tipus.ToUpper().Contains(search)).ToList();
+                foreach (Alkatresz p in filteredParts)
                 {
                     partIds.Add(p.Id);
                 }
@@ -63,24 +63,24 @@ namespace Raktarkezeles.DAL
         //GET Alkatrész id alapján
         //paraméter az alkatrész id-ja
         //visszatér a teljes alkatrésszel
-        public static Part GetPart(int id)
+        public static Alkatresz GetPart(int id)
         {
-            Part selectedPart = parts.Where(x => x.Id == id).DefaultIfEmpty(null).First();
+            Alkatresz selectedPart = parts.Where(x => x.Id == id).DefaultIfEmpty(null).First();
             if(selectedPart == null)
             {
                 return null;
             }
-            List<Occurrence> selectedOccurrences = occurrences.Where(x => x.PartId == id).ToList();
-            selectedPart.Occurrences.Clear();
-            foreach(Occurrence occ in selectedOccurrences)
+            List<AlkatreszElofordulas> selectedOccurrences = occurrences.Where(x => x.AlkatreszId == id).ToList();
+            selectedPart.AlkatreszElofordulasok.Clear();
+            foreach(AlkatreszElofordulas occ in selectedOccurrences)
             {
-                selectedPart.Occurrences.Add(occ);
+                selectedPart.AlkatreszElofordulasok.Add(occ);
             }
             return selectedPart;
         }
         //POST Alkatrész
         //megkapja az alkatrészt és visszaadja azt ha sikeres a feltöltés
-        public static Part AddPart(Part newPart)
+        public static Alkatresz AddPart(Alkatresz newPart)
         {
             newPart.Id = latestPartId;
             latestPartId++;
@@ -89,26 +89,26 @@ namespace Raktarkezeles.DAL
         }
         //PUT Alkatrész
         //Megkapja a módosított alkatrész és visszaadja azt
-        public static void EditPart(Part editedPart)
+        public static void EditPart(Alkatresz editedPart)
         {
-            Part oldPart = parts.Where(x => x.Id == editedPart.Id).DefaultIfEmpty(null).First();
+            Alkatresz oldPart = parts.Where(x => x.Id == editedPart.Id).DefaultIfEmpty(null).First();
             if(oldPart == null)
             {
                 return;
             }
-            oldPart.ManufacturerId = editedPart.ManufacturerId;
-            oldPart.CategoryId = editedPart.CategoryId;
-            oldPart.UnitId = editedPart.UnitId;
-            oldPart.Name = editedPart.Name;
-            oldPart.ItemNumber = editedPart.ItemNumber;
-            oldPart.TypeNumber = editedPart.TypeNumber;
-            oldPart.Description = editedPart.Description;
+            oldPart.GyartoId = editedPart.GyartoId;
+            oldPart.KategoriaId = editedPart.KategoriaId;
+            oldPart.MennyisegiEgysegId = editedPart.MennyisegiEgysegId;
+            oldPart.Nev = editedPart.Nev;
+            oldPart.Cikkszam = editedPart.Cikkszam;
+            oldPart.Tipus = editedPart.Tipus;
+            oldPart.Leiras = editedPart.Leiras;
         }
         //DELETE Alkatrész
         //Kitörli az megkapott id-jú alkatrészt
         public static void DeletePart(int partId)
         {
-            var occurrencesToRemove = occurrences.Where(x => x.PartId == partId).ToList();
+            var occurrencesToRemove = occurrences.Where(x => x.AlkatreszId == partId).ToList();
             foreach(var occ in occurrencesToRemove)
             {
                 occurrences.Remove(occ);
@@ -123,37 +123,37 @@ namespace Raktarkezeles.DAL
         //GET alkatrész kép
         //megkapja az alkatrész id-ját
         //visszaadja a képet
-        public static byte[] GetPartPicture(int partId)
-        {
-            Part selectedPart = parts.Where(x => x.Id == partId).DefaultIfEmpty(null).First();
-            if (selectedPart == null)
-            {
-                return null;
-            }
-            return selectedPart.Image;
-        }
+        //public static byte[] GetPartPicture(int partId)
+        //{
+        //    Alkatresz selectedPart = parts.Where(x => x.Id == partId).DefaultIfEmpty(null).First();
+        //    if (selectedPart == null)
+        //    {
+        //        return null;
+        //    }
+        //    return selectedPart.Foto;
+        //}
         //POST alkatrész kép
         //megkapja az alaktrész id-ját és a képet és frissíti azt
-        public static void EditPartPicture(int partId, byte[] newImage)
-        {
-            Part selectedPart = parts.Where(x => x.Id == partId).DefaultIfEmpty(null).First();
-            if (selectedPart == null)
-            {
-                return;
-            }
-            selectedPart.Image = newImage;
-        }
+        //public static void EditPartPicture(int partId, byte[] newImage)
+        //{
+        //    Alkatresz selectedPart = parts.Where(x => x.Id == partId).DefaultIfEmpty(null).First();
+        //    if (selectedPart == null)
+        //    {
+        //        return;
+        //    }
+        //    selectedPart.Foto = newImage;
+        //}
         //GET előfordulás
         //megkapja az id-t 
         //visszaadja az előfordulást
-        public static Occurrence GetOccurrence(int id)
+        public static AlkatreszElofordulas GetOccurrence(int id)
         {
             var occurrence = occurrences.Where(x => x.Id == id).DefaultIfEmpty(null).First();
             return occurrence;
         }
         //POST előfordulás
         //megkapja az új előfordulási helyet és visszadaja azt
-        public static void AddOccurrence(Occurrence occurrence)
+        public static void AddOccurrence(AlkatreszElofordulas occurrence)
         {
             occurrence.Id = latestOccurrenceId;
             latestOccurrenceId++;
@@ -168,7 +168,7 @@ namespace Raktarkezeles.DAL
             {
                 return;
             }
-            occurrenceToChange.Quantity = quantity;
+            occurrenceToChange.Mennyiseg = quantity;
         }
         //DELETE előfordulás
         //megapott id-jú előfordulási helyet kitörli
@@ -183,25 +183,25 @@ namespace Raktarkezeles.DAL
         }
         //GET raktározási helyek
         //visszaadja a raktározási helyek listáját
-        public static ICollection<Warehouse> GetWarehouses()
+        public static ICollection<RaktarozasiHely> GetWarehouses()
         {
             return warehouses;
         }
         //GET gyártók
         //visszaadja a gyártók listáját
-        public static ICollection<Manufacturer> GetManufacturers()
+        public static ICollection<Gyarto> GetManufacturers()
         {
             return manufacturers;
         }
         //GET kategóriák
         //visszaadja az összes kategóriát
-        public static ICollection<Category> GetCategories()
+        public static ICollection<Kategoria> GetCategories()
         {
             return categories;
         }
         //GET mennyiségi egységek
         //visszaadja az összes mennyiségi egységet
-        public static ICollection<Unit> GetUnits()
+        public static ICollection<MennyisegiEgyseg> GetUnits()
         {
             return units;
         }

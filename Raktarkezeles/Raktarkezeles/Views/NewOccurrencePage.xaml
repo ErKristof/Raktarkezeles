@@ -6,7 +6,7 @@
     <ContentPage.Content>
         <Frame CornerRadius="10" HorizontalOptions="FillAndExpand" VerticalOptions="Start" BackgroundColor="White" Margin="10,100,10,10" Padding="10,20,10,10"> 
             <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                <Picker Title="Raktározási hely" ItemsSource="{Binding Warehouses}" SelectedItem="{Binding Warehouse}" ItemDisplayBinding="{Binding Name}" FontSize="20"/>
+                <Picker Title="Raktározási hely" ItemsSource="{Binding Warehouses}" SelectedItem="{Binding Warehouse}" ItemDisplayBinding="{Binding Nev}" FontSize="20"/>
                 <Label Text="Raktározási hely megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidWarehouse}" BackgroundColor="White"/>
                 <StackLayout Orientation="Horizontal">
                     <Entry Placeholder="Polc" HorizontalOptions="FillAndExpand" Text="{Binding Rack}" Keyboard="Numeric" FontSize="20"/>

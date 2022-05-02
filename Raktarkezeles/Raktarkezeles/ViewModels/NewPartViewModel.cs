@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using Raktarkezeles.Models;
@@ -14,12 +15,14 @@ using Xamarin.Essentials;
 using System.IO;
 using ZXing.Mobile;
 using ZXing;
+using Raktarkezeles.Services;
 
 namespace Raktarkezeles.ViewModels
 {
     public class NewPartViewModel : BindableBase
     {
-        private Part part;
+        private RaktarkezelesService service = new RaktarkezelesService();
+        private Alkatresz part;
         private string name;
         public string Name
         {
@@ -36,8 +39,8 @@ namespace Raktarkezeles.ViewModels
                 }
             }
         }
-        private Manufacturer manufacturer;
-        public Manufacturer Manufacturer
+        private Gyarto manufacturer;
+        public Gyarto Manufacturer
         {
             get
             {
@@ -84,8 +87,8 @@ namespace Raktarkezeles.ViewModels
                 }
             }
         }
-        private Unit unit;
-        public Unit Unit
+        private MennyisegiEgyseg unit;
+        public MennyisegiEgyseg Unit
         {
             get
             {
@@ -100,8 +103,8 @@ namespace Raktarkezeles.ViewModels
                 }
             }
         }
-        private Category category;
-        public Category Category
+        private Kategoria category;
+        public Kategoria Category
         {
             get
             {
@@ -167,39 +170,31 @@ namespace Raktarkezeles.ViewModels
         private bool invalidImage = false;
         public bool InvalidImage { get { return invalidImage; } set { invalidImage = value; OnPropertyChanged(); } }
  
-        private List<Manufacturer> manufacturers;
-        private List<Category> categories;
-        private List<Unit> units;
+        private ObservableCollection<Gyarto> manufacturers = new ObservableCollection<Gyarto>();
+        private ObservableCollection<Kategoria> categories = new ObservableCollection<Kategoria>();
+        private ObservableCollection<MennyisegiEgyseg> units = new ObservableCollection<MennyisegiEgyseg>();
 
-        public List<Manufacturer> Manufacturers
+        public ObservableCollection<Gyarto> Manufacturers
         {
             get { return manufacturers; }
+            set { manufacturers = value; }
         }
-        public List<Category> Categories
+        public ObservableCollection<Kategoria> Categories
         {
             get { return categories; }
+            set { categories = value; }
         }
-        public List<Unit> Units
+        public ObservableCollection<MennyisegiEgyseg> Units
         {
             get { return units; }
+            set { units = value; }
         }
 
-        public NewPartViewModel(Part newPart = null)
+        public NewPartViewModel(Alkatresz newPart = null)
         {
-            manufacturers = (List<Manufacturer>)PartContext.GetManufacturers();
-            categories = (List<Category>)PartContext.GetCategories();
-            units = (List<Unit>)PartContext.GetUnits();
-            if (newPart != null)
+            Setup(newPart);
+            if(newPart != null)
             {
-                part = newPart;
-                Image = newPart.Image;
-                Name = newPart.Name;
-                Manufacturer = newPart.Manufacturer;
-                TypeNumber = newPart.TypeNumber;
-                ItemNumber = newPart.ItemNumber;
-                Unit = newPart.Unit;
-                Category = newPart.Category;
-                Description = newPart.Description;
                 AddPartCommand = new Command(SavePartCommandExecute);
             }
             else
@@ -209,28 +204,58 @@ namespace Raktarkezeles.ViewModels
             TakePictureCommand = new Command(TakePictureComandExecute);
             ScanBarcodeCommand = new Command(ScanBarcodeCommandExecute);
         }
+        private async void Setup(Alkatresz newPart = null)
+        {
+            await GetLists();
+            if (newPart != null)
+            {
+                part = newPart;
+                //Image = newPart.Foto;
+                Name = newPart.Nev;
+                Manufacturer = Manufacturers.First(x => x.Id == newPart.GyartoId);
+                TypeNumber = newPart.Tipus;
+                ItemNumber = newPart.Cikkszam;
+                Unit = Units.First(x => x.Id == newPart.MennyisegiEgysegId);
+                Category = Categories.First(x => x.Id == newPart.KategoriaId);
+                Description = newPart.Leiras;
+            }
+        }
+        private async Task GetLists()
+        {
+            foreach (var m in await service.GetGyartok())
+            {
+                Manufacturers.Add(m);
+            }
+            foreach (var c in await service.GetKategoria())
+            {
+                Categories.Add(c);
+            }
+            foreach (var u in await service.GetMennyisegiEgysegek())
+            {
+                Units.Add(u);
+            }
+        }
 
         private async void AddPartCommandExecute()
         {
             if (!CheckValidation())
             {
-                Part newPart = new Part
+                Alkatresz newPart = new Alkatresz
                 {
-                    Image = Image,
-                    Name = Name,
-                    Manufacturer = Manufacturer,
-                    ManufacturerId = Manufacturer.Id,
-                    TypeNumber = TypeNumber,
-                    ItemNumber = ItemNumber,
-                    Unit = Unit,
-                    UnitId = Unit.Id,
-                    Category = Category,
-                    CategoryId = Category.Id,
-                    Description = Description,
-                    Occurrences = new ObservableCollection<Occurrence>()
+                    //Foto = Image,
+                    Nev = Name,
+                    Gyarto = Manufacturer,
+                    GyartoId = Manufacturer.Id,
+                    Tipus = TypeNumber,
+                    Cikkszam = ItemNumber,
+                    MennyisegiEgyseg = Unit,
+                    MennyisegiEgysegId = Unit.Id,
+                    Kategoria = Category,
+                    KategoriaId = Category.Id,
+                    Leiras = Description,
+                    AlkatreszElofordulasok = new ObservableCollection<AlkatreszElofordulas>()
                 };
-                newPart = PartContext.AddPart(newPart);
-                MessagingCenter.Send(this, "New", newPart);
+                newPart = await service.PostAlkatresz(newPart);
                 await Application.Current.MainPage.Navigation.PopAsync();
             }
         }
@@ -239,18 +264,18 @@ namespace Raktarkezeles.ViewModels
         {
             if (!CheckValidation())
             {
-                part.Image = Image;
-                part.Name = Name;
-                part.Manufacturer = Manufacturer;
-                part.ManufacturerId = Manufacturer.Id;
-                part.TypeNumber = TypeNumber;
-                part.ItemNumber = ItemNumber;
-                part.Unit = Unit;
-                part.UnitId = Unit.Id;
-                part.Category = Category;
-                part.CategoryId = Category.Id;
-                part.Description = Description;
-                PartContext.EditPart(part);
+                //part.Foto = Image;
+                part.Nev = Name;
+                part.Gyarto = Manufacturer;
+                part.GyartoId = Manufacturer.Id;
+                part.Tipus = TypeNumber;
+                part.Cikkszam = ItemNumber;
+                part.MennyisegiEgyseg = Unit;
+                part.MennyisegiEgysegId = Unit.Id;
+                part.Kategoria = Category;
+                part.KategoriaId = Category.Id;
+                part.Leiras = Description;
+                await service.PutAlkatresz(part);
                 await Application.Current.MainPage.Navigation.PopAsync();
             }
         }

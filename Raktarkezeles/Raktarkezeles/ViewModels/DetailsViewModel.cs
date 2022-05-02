@@ -8,15 +8,16 @@ using System.Runtime.CompilerServices;
 using Xamarin.Forms;
 using System.Windows.Input;
 using Raktarkezeles.Views;
-using Raktarkezeles.DAL;
 using Raktarkezeles.MVVM;
 using System.Linq;
+using Raktarkezeles.Services;
 
 namespace Raktarkezeles.ViewModels
 {
     public class DetailsViewModel : BindableBase
     {
-        private Part part;
+        private RaktarkezelesService service = new RaktarkezelesService();
+        private Alkatresz part;
         private byte[] image;
         public byte[] Image
         {
@@ -49,8 +50,8 @@ namespace Raktarkezeles.ViewModels
                 }
             }
         }
-        private Manufacturer manufacturer;
-        public Manufacturer Manufacturer
+        private Gyarto manufacturer;
+        public Gyarto Manufacturer
         {
             get
             {
@@ -113,11 +114,11 @@ namespace Raktarkezeles.ViewModels
                 }
             }
         }
-        public ObservableCollection<Occurrence> Occurrences
+        public ObservableCollection<AlkatreszElofordulas> Occurrences
         {
             get
             {
-                return part != null ? (ObservableCollection<Occurrence>)part.Occurrences : null;
+                return part != null ? part.AlkatreszElofordulasok : null;
             }
         }
 
@@ -129,7 +130,7 @@ namespace Raktarkezeles.ViewModels
         public ICommand PlusOneCommand { protected set; get; }
         public ICommand ChangeQuantityCommand { private set; get; }
         public ICommand DeleteOccurrenceCommnad { protected set; get; }
-        public DetailsViewModel(Part part)
+        public DetailsViewModel(Alkatresz part)
         {
             this.part = part;
             UpdatePage();
@@ -141,7 +142,6 @@ namespace Raktarkezeles.ViewModels
             PlusOneCommand = new Command<int>(PlusOneCommandExecute);
             DeleteOccurrenceCommnad = new Command<int>(DeleteOccurrenceCommandExecute);
             ChangeQuantityCommand = new Command<int>(ChangeQuantityCommandExecute);
-            
         }
         private async void EditPartCommandExecute()
         {
@@ -153,17 +153,17 @@ namespace Raktarkezeles.ViewModels
         private async void DeletePartCommandExecute()
         {
             MessagingCenter.Send(this, "Deleted", part.Id);
-            PartContext.DeletePart(part.Id);
+            await service.DeleteAlkatresz(part.Id);
             await Application.Current.MainPage.Navigation.PopAsync();
         }
         private async void NewOccurrenceCommandExecute()
         {
-            MessagingCenter.Subscribe<NewOccurrenceViewModel, Occurrence>(this, "NewOccurrence", (vm, newOccurrence) =>
+            MessagingCenter.Subscribe<NewOccurrenceViewModel, AlkatreszElofordulas>(this, "NewOccurrence", (vm, newOccurrence) =>
             {
                 Occurrences.Add(newOccurrence);
-                MessagingCenter.Unsubscribe<NewOccurrenceViewModel, Occurrence>(this, "NewOccurrence");
+                MessagingCenter.Unsubscribe<NewOccurrenceViewModel, AlkatreszElofordulas>(this, "NewOccurrence");
             });
-            NewOccurrenceViewModel newOccurrenceVM = new NewOccurrenceViewModel(part.Id);
+            NewOccurrenceViewModel newOccurrenceVM = new NewOccurrenceViewModel(part);
             NewOccurrencePage newOccurrencePage = new NewOccurrencePage();
             newOccurrencePage.BindingContext = newOccurrenceVM;
             await Application.Current.MainPage.Navigation.PushModalAsync(newOccurrencePage);
@@ -177,28 +177,34 @@ namespace Raktarkezeles.ViewModels
         }
         private async void ChangeQuantityCommandExecute(int id)
         {
-            QuantityChangeViewModel quantityChangeVM = new QuantityChangeViewModel(Occurrences.FirstOrDefault(o => o.Id == id).Id);
+            QuantityChangeViewModel quantityChangeVM = new QuantityChangeViewModel(Occurrences.FirstOrDefault(o => o.Id == id));
             QuantityChangePage quantityChangePage = new QuantityChangePage();
             quantityChangePage.BindingContext = quantityChangeVM;
             await Application.Current.MainPage.Navigation.PushModalAsync(quantityChangePage);
         }
-        private void MinusOneCommandExecute(int id)
+        private async void MinusOneCommandExecute(int id)
         {
-            int currentQuantity = Occurrences.First(o => o.Id == id).Quantity;
-            if (currentQuantity > 0)
+            var changedElofordulas = Occurrences.First(o => o.Id == id);
+            if (changedElofordulas.Mennyiseg > 0)
             {
-                PartContext.ChangeQuantity(id, currentQuantity - 1);
+                if (await service.ChangeQuantity(id, changedElofordulas.Mennyiseg - 1))
+                {
+                    changedElofordulas.Mennyiseg--;
+                }
             }
         }
-        private void PlusOneCommandExecute(int id)
+        private async void PlusOneCommandExecute(int id)
         {
-            int currentQuantity = Occurrences.First(o => o.Id == id).Quantity;
-            PartContext.ChangeQuantity(id, currentQuantity + 1);
+            var changedElofordulas = Occurrences.First(o => o.Id == id);
+            if (await service.ChangeQuantity(id, changedElofordulas.Mennyiseg + 1))
+            {
+                changedElofordulas.Mennyiseg++;
+            }
         }
-        private void DeleteOccurrenceCommandExecute(int id)
+        private async void DeleteOccurrenceCommandExecute(int id)
         {
+            await service.DeleteElofordulas(id);
             Occurrences.Remove(Occurrences.First(x => x.Id == id));
-            PartContext.DeleteOccurrence(id);
         }
         public override void OnAppearing()
         {
@@ -211,12 +217,12 @@ namespace Raktarkezeles.ViewModels
         }
         private void UpdatePage()
         {
-            Image = part.Image;
-            Name = part.Name;
-            Manufacturer = part.Manufacturer;
-            ItemNumber = part.ItemNumber;
-            TypeNumber = part.TypeNumber;
-            Description = part.Description;
+            Image = part.Foto;
+            Name = part.Nev;
+            Manufacturer = part.Gyarto;
+            ItemNumber = part.Cikkszam;
+            TypeNumber = part.Tipus;
+            Description = part.Leiras;
         }
     }
 }

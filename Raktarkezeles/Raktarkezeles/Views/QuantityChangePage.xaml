@@ -11,8 +11,8 @@
                 <Label FontSize="Title" HorizontalOptions="Center" TextColor="Black">
                     <Label.Text>
                         <MultiBinding StringFormat="{}{0} {1}">
-                            <Binding Path="Occurrence.Quantity"/>
-                            <Binding Path="Occurrence.Part.Unit.ShortName"/>
+                            <Binding Path="Occurrence.Mennyiseg"/>
+                            <Binding Path="Occurrence.Alkatresz.MennyisegiEgyseg.RovidNev"/>
                         </MultiBinding>
                     </Label.Text>
                 </Label>

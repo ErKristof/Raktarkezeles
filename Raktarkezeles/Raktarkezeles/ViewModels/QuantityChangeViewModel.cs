@@ -6,13 +6,15 @@ using Raktarkezeles.MVVM;
 using Raktarkezeles.Models;
 using System.Windows.Input;
 using Raktarkezeles.DAL;
+using Raktarkezeles.Services;
 
 namespace Raktarkezeles.ViewModels
 {
     public class QuantityChangeViewModel : BindableBase
     {
-        private Occurrence occurrence;
-        public Occurrence Occurrence
+        private RaktarkezelesService service = new RaktarkezelesService();
+        private AlkatreszElofordulas occurrence;
+        public AlkatreszElofordulas Occurrence
         {
             get
             {
@@ -42,9 +44,9 @@ namespace Raktarkezeles.ViewModels
         public ICommand SubtractQuantityCommand { private set; get; }
         public ICommand AddQuantityCommand { private set; get; }
         public ICommand CancelCommand { private set; get; }
-        public QuantityChangeViewModel(int occurrenceId)
+        public QuantityChangeViewModel(AlkatreszElofordulas elofordulas)
         {
-            Occurrence = PartContext.GetOccurrence(occurrenceId);
+            Occurrence = elofordulas;
             SubtractQuantityCommand = new Command(SubtractQuantityCommndExecute);
             AddQuantityCommand = new Command(AddQuantityCommandExecute);
             CancelCommand = new Command(CancelCommandExecute);
@@ -53,7 +55,9 @@ namespace Raktarkezeles.ViewModels
         {
             if (!CheckValidation(true))
             {
-                PartContext.ChangeQuantity(occurrence.Id, Occurrence.Quantity - int.Parse(Quantity));
+                //PartContext.ChangeQuantity(occurrence.Id, Occurrence.Mennyiseg - int.Parse(Quantity));
+                await service.ChangeQuantity(occurrence.Id, Occurrence.Mennyiseg - int.Parse(Quantity));
+                occurrence.Mennyiseg -= int.Parse(Quantity);
                 await Application.Current.MainPage.Navigation.PopModalAsync();
             }
         }
@@ -61,7 +65,9 @@ namespace Raktarkezeles.ViewModels
         {
             if (!CheckValidation(false))
             {
-                PartContext.ChangeQuantity(occurrence.Id, Occurrence.Quantity + int.Parse(Quantity));
+                //PartContext.ChangeQuantity(occurrence.Id, Occurrence.Mennyiseg + int.Parse(Quantity));
+                await service.ChangeQuantity(occurrence.Id, Occurrence.Mennyiseg + int.Parse(Quantity));
+                occurrence.Mennyiseg += int.Parse(Quantity);
                 await Application.Current.MainPage.Navigation.PopModalAsync();
             }
         }
@@ -75,11 +81,11 @@ namespace Raktarkezeles.ViewModels
             InvalidQuantity = !int.TryParse(Quantity, out result);
             if (isSubtracting && !InvalidQuantity)
             {
-                InvalidQuantity = Occurrence.Quantity - result < 0;
+                InvalidQuantity = Occurrence.Mennyiseg - result < 0;
             }
             else if(!isSubtracting && !InvalidQuantity)
             {
-                InvalidQuantity = Occurrence.Quantity + result < 0;
+                InvalidQuantity = Occurrence.Mennyiseg + result < 0;
             }
             return InvalidQuantity;
         }

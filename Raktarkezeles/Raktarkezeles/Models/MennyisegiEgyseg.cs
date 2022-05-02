@@ -4,9 +4,10 @@ using System.Text;
 
 namespace Raktarkezeles.Models
 {
-    public class Category
+    public class MennyisegiEgyseg
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string RovidNev { get; set; }
+        public string TeljesNev { get; set; }
     }
 }

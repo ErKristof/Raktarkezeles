@@ -17,7 +17,7 @@
                     <Label Text="Kép megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidImage}"/>
                     <Entry Placeholder="Név" Text="{Binding Name}" FontSize="20"/>
                     <Label Text="Név megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidName}"/>
-                    <Picker Title="Gyártó" ItemsSource="{Binding Manufacturers}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding Manufacturer}" FontSize="20"/>
+                    <Picker Title="Gyártó" ItemsSource="{Binding Manufacturers}" ItemDisplayBinding="{Binding TeljesNev}" SelectedItem="{Binding Manufacturer}" FontSize="20"/>
                     <Label Text="Gyártó megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidManufacturer}" />
                     <Entry Placeholder="Típus" Text="{Binding TypeNumber}" FontSize="20"/>
                     <Label Text="Típus megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidTypeNumber}"/>
@@ -30,9 +30,9 @@
                         <Button Grid.Column="1" Text="{x:StaticResource IconBarcode}" FontFamily="Icons" BackgroundColor="White" FontSize="30" HeightRequest="45" WidthRequest="60" HorizontalOptions="End" VerticalOptions="Center" Padding="5,0,5,5" Command="{Binding ScanBarcodeCommand}"/>
                     </Grid>
                     <Label Text="Cikkszám megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidItemNumber}"/>
-                    <Picker Title="Mennyiségi egység" ItemsSource="{Binding Units}" ItemDisplayBinding="{Binding FullName}" SelectedItem="{Binding Unit}" FontSize="20"/>
+                    <Picker Title="Mennyiségi egység" ItemsSource="{Binding Units}" ItemDisplayBinding="{Binding TeljesNev}" SelectedItem="{Binding Unit}" FontSize="20"/>
                     <Label Text="Mennyiségi egység megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidUnit}" />
-                    <Picker Title="Kategória" ItemsSource="{Binding Categories}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding Category}" FontSize="20"/>
+                    <Picker Title="Kategória" ItemsSource="{Binding Categories}" ItemDisplayBinding="{Binding Nev}" SelectedItem="{Binding Category}" FontSize="20"/>
                     <Label Text="Kategória megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidCategory}" />
                     <Editor Placeholder="Leírás" Text="{Binding Description}" AutoSize="TextChanges" FontSize="20"/>
                 </StackLayout>

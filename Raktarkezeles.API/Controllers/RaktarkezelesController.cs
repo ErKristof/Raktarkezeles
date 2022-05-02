@@ -134,6 +134,10 @@ namespace Raktarkezeles.API.Controllers
             {
                 return NotFound();
             }
+            if (result.Foto == null)
+            {
+                return NotFound();
+            }
             var image = new MemoryStream(result.Foto);
             return File(image, "image/jpeg");
         }
@@ -147,13 +151,10 @@ namespace Raktarkezeles.API.Controllers
             {
                 return NotFound();
             }
-            foreach (var file in Request.Form.Files)
+            using (var memoryStream = new MemoryStream())
             {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await file.CopyToAsync(memoryStream);
-                    result.Foto = memoryStream.ToArray();
-                }
+                await Request.Body.CopyToAsync(memoryStream);
+                result.Foto = memoryStream.ToArray();
             }
             await _context.SaveChangesAsync();
             return Ok();
