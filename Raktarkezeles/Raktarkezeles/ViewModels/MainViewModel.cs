@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Text;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections.ObjectModel;
@@ -14,14 +11,15 @@ using ZXing.Mobile;
 using ZXing;
 using Raktarkezeles.Services;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace Raktarkezeles.ViewModels
 {
     public class MainViewModel : BindableBase
     {
-        private RaktarkezelesService service = new RaktarkezelesService();
-        private List<int> partIds = new List<int>();
-        private int partsLoading = 0;
+        private IRaktarService service = new LocalRaktarkezelesService();
+        private List<int> alkatreszIdk = new List<int>();
+        private static readonly int LOADING_VALUE = 20;
         private bool isRefreshing = false;
         public bool IsRefreshing
         {
@@ -31,61 +29,52 @@ namespace Raktarkezeles.ViewModels
             }
             set
             {
-                if(isRefreshing != value)
+                if (isRefreshing != value)
                 {
                     isRefreshing = value;
                 }
                 OnPropertyChanged();
             }
         }
-        private ObservableCollection<Alkatresz> parts = new ObservableCollection<Alkatresz>();
-        public ObservableCollection<Alkatresz> Parts
+        public ObservableCollection<Alkatresz> Alkatreszek { get; set; } = new ObservableCollection<Alkatresz>();
+        private Alkatresz selectedAlkatresz;
+        public Alkatresz SelectedAlkatresz
         {
             get
             {
-                return parts;
+                return selectedAlkatresz;
             }
             set
             {
-                parts = value;
-            }
-        }
-        private Alkatresz selectedPart;
-        public Alkatresz SelectedPart
-        {
-            get
-            {
-                return selectedPart;
-            }
-            set
-            {
-                selectedPart = value;
+                selectedAlkatresz = value;
                 OnPropertyChanged();
             }
         }
-        private string searchText = "";
-        public string SearchText
+        private string searchWord = "";
+        public string SearchWord
         {
-            get
-            {
-                return searchText;
-            }
+            get { return searchWord; }
             set
             {
-                if (searchText != value)
+                if (string.IsNullOrEmpty(value))
                 {
-                    searchText = value;
-                    SearchPartsCommandExecute(searchText);
-                    OnPropertyChanged();
+                    searchWord = "";
                 }
+                else
+                {
+                    searchWord = value;
+                }
+                OnPropertyChanged();
             }
         }
-
+        private volatile bool IsBusy = false;
+        private readonly object syncObject = new object();
         public ICommand GoToNewPartCommand { private set; get; }
         public ICommand GoToDetailsCommand { private set; get; }
         public ICommand ScanBarcodeCommand { private set; get; }
         public ICommand LoadItemsCommand { private set; get; }
         public ICommand RefreshPartsCommand { private set; get; }
+        public ICommand SearchCommand { private set; get; }
         public MainViewModel()
         {
             GoToDetailsCommand = new Command(GoToDetailsCommandExecute);
@@ -93,26 +82,37 @@ namespace Raktarkezeles.ViewModels
             ScanBarcodeCommand = new Command(ScanBarcodeCommandExecute);
             LoadItemsCommand = new Command(LoadItemsCommandExecute);
             RefreshPartsCommand = new Command(RefreshPartsCommandExecute);
-            GetPartIds();
+            SearchCommand = new Command<string>(SearchCommandExecute);
             MessagingCenter.Subscribe<DetailsViewModel, Alkatresz>(this, "Updated", (vm, changedPart) =>
             {
                 changedPart.MennyisegChanged();
             });
             MessagingCenter.Subscribe<DetailsViewModel, int>(this, "Deleted", (vm, id) =>
             {
-                partIds.Remove(id);
-                Parts.Remove(Parts.First(x => x.Id == id));
+                lock (syncObject)
+                {
+                    alkatreszIdk.Remove(id);
+                    Alkatreszek.Remove(Alkatreszek.First(x => x.Id == id));
+                }
+            });
+            MessagingCenter.Subscribe<NewPartViewModel, Alkatresz>(this, "Added", (vm, newPart) =>
+            {
+                lock (syncObject)
+                {
+                    alkatreszIdk.Insert(0, newPart.Id);
+                    Alkatreszek.Insert(0, newPart);
+                }
             });
         }
         private async void GoToDetailsCommandExecute()
         {
-            if (selectedPart != null)
+            if (selectedAlkatresz != null)
             {
-                DetailsViewModel detailsVM = new DetailsViewModel(selectedPart);
+                DetailsViewModel detailsVM = new DetailsViewModel(selectedAlkatresz);
                 DetailsPage detailsPage = new DetailsPage();
                 detailsPage.BindingContext = detailsVM;
                 await Application.Current.MainPage.Navigation.PushAsync(detailsPage);
-                SelectedPart = null;
+                SelectedAlkatresz = null;
             }
         }
         private async void GoToNewPartCommandExecute()
@@ -122,74 +122,134 @@ namespace Raktarkezeles.ViewModels
             newPage.BindingContext = newVM;
             await Application.Current.MainPage.Navigation.PushAsync(newPage);
         }
-        private void SearchPartsCommandExecute(string input)
+        private async void SearchCommandExecute(string input)
         {
-            
+            List<int> ids = await LoadIds(input);
+            int partsToLoad = ids.Count > LOADING_VALUE ? LOADING_VALUE : ids.Count;
+            List<Alkatresz> alkatreszek = await LoadAlkatreszek(ids.GetRange(0, partsToLoad));
+            lock (syncObject)
+            {
+                Alkatreszek.Clear();
+                alkatreszIdk.Clear();
+                alkatreszIdk.AddRange(ids);
+                foreach (Alkatresz a in alkatreszek)
+                {
+                    Alkatreszek.Add(a);
+                }
+            }
         }
         private async void ScanBarcodeCommandExecute()
         {
             MobileBarcodeScanner scanner = new MobileBarcodeScanner();
             Result result = await scanner.Scan();
-            if(result is null)
+            if (result == null)
             {
                 return;
             }
-            var filteredParts = parts.Where(p => p.Cikkszam.ToUpper().Contains(result.Text.ToUpper())).ToList();
-            if(filteredParts.Count == 1)
+            var matchingPartIds = await LoadIds(result.Text);
+            if (matchingPartIds.Count == 1)
             {
-                SelectedPart = filteredParts[0];
-                SearchText = "";
+                List<Alkatresz> alkatreszek = await LoadAlkatreszek(matchingPartIds);
+                SelectedAlkatresz = alkatreszek[0];
             }
             else
             {
-                SearchText = result.Text;
+                SearchWord = result.Text;
             }
         }
         private async void LoadItemsCommandExecute()
         {
-            await LoadItems();
-        }
-        private void RefreshPartsCommandExecute()
-        {
-            IsRefreshing = true;
-            partIds.Clear();
-            Parts.Clear();
-            partsLoading = 0;
-            GetPartIds();
-            IsRefreshing = false;
-        }
-        private async Task LoadItems()
-        {
-            int loadingValue = 20;
-            int partsToLoadTo = 0;
-            if(partsLoading == 0)
-            {
-                partsToLoadTo = partIds.Count < loadingValue ? partIds.Count : loadingValue;
-            }
-            else if(parts.Count < partsLoading || partsLoading == partIds.Count)
+            if (IsBusy)
             {
                 return;
             }
-            else
+            IsBusy = true;
+            List<Alkatresz> newAlkatreszek = await LoadAlkatreszek(GetNextIds());
+            lock (syncObject)
             {
-                partsToLoadTo = partIds.Count < partsLoading + loadingValue ? partIds.Count : partsLoading + loadingValue;
+                foreach (Alkatresz a in newAlkatreszek)
+                {
+                    Alkatreszek.Add(a);
+                }
             }
-            partsLoading = partsToLoadTo;
-            for (int i = Parts.Count; i < partsToLoadTo; i++)
+            IsBusy = false;
+        }
+        private async void RefreshPartsCommandExecute()
+        {
+            List<int> ids = await LoadIds(SearchWord);
+            int numberOfItemsToLoad = ids.Count > LOADING_VALUE ? LOADING_VALUE : ids.Count;
+            List<Alkatresz> alkatreszek = await LoadAlkatreszek(ids.GetRange(0, numberOfItemsToLoad));
+            lock (syncObject)
             {
-                Alkatresz newAlkatresz = await service.GetAlkatresz(partIds[i]);
-                Parts.Add(newAlkatresz);
+                Alkatreszek.Clear();
+                alkatreszIdk.Clear();
+                alkatreszIdk.AddRange(ids);
+                foreach (Alkatresz a in alkatreszek)
+                {
+                    Alkatreszek.Add(a);
+                }
             }
-
+            IsRefreshing = false;
         }
-        private async void GetPartIds(string kereses = "")
+        private async Task<List<Alkatresz>> LoadAlkatreszek(List<int> ids)
         {
-            partIds = await service.GetAlkatreszek(kereses);
-            await LoadItems();
+            List<Alkatresz> newAlkatreszek = new List<Alkatresz>();
+            foreach (int id in ids)
+            {
+                try
+                {
+                    newAlkatreszek.Add(await service.GetAlkatresz(id));
+                }
+                catch (HttpRequestException HREx)
+                {
+                    DependencyService.Get<IAlertService>().LongAlert(HREx.Message);
+                }
+                catch (TimeoutException TEx)
+                {
+                    DependencyService.Get<IAlertService>().LongAlert(TEx.Message);
+                }
+            }
+            foreach (Alkatresz a in newAlkatreszek)
+            {
+                try
+                {
+                    a.Foto = await service.GetFoto(a.Id);
+                }
+                catch (HttpRequestException) {}
+                catch (TimeoutException TEx) { DependencyService.Get<IAlertService>().LongAlert(TEx.Message); }
+            }
+            return newAlkatreszek;
         }
-        public override void OnAppearing()
+        private async Task<List<int>> LoadIds(string searchWord = "")
         {
-            base.OnAppearing();
+            List<int> newIds = new List<int>();
+            try
+            {
+                newIds.AddRange(await service.GetAlkatreszek(searchWord));
+            }
+            catch (HttpRequestException HREx)
+            {
+                DependencyService.Get<IAlertService>().LongAlert(HREx.Message);
+            }
+            catch (TimeoutException TEx)
+            {
+                DependencyService.Get<IAlertService>().LongAlert(TEx.Message);
+            }
+            return newIds;
+        }
+        private List<int> GetNextIds()
+        {
+            List<int> loadedIds = new List<int>();
+            foreach(Alkatresz a in Alkatreszek)
+            {
+                loadedIds.Add(a.Id);
+            }
+            List<int> idsToLoad = alkatreszIdk.Where(x => !loadedIds.Contains(x)).ToList();
+            if(idsToLoad.Count < 20)
+            {
+                return idsToLoad;
+            }
+            return idsToLoad.GetRange(0, 20);
         }
     }
 }

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Raktarkezeles.Models;
 
-namespace Raktarkezeles.Models
+namespace Raktarkezeles.DTOModels
 {
     public class AlkatreszElofordulasDTO
     {

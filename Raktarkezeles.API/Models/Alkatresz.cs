@@ -1,29 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
-
-#nullable disable
+﻿using System.Collections.Generic;
 
 namespace Raktarkezeles.API.Models
 {
     public partial class Alkatresz
     {
-        public Alkatresz()
-        {
-            AlkatreszElofordulasok = new HashSet<AlkatreszElofordulas>();
-        }
-        public Alkatresz(AlkatreszDTO alkatreszDTO)
-        {
-            GyartoId = alkatreszDTO.GyartoId;
-            KategoriaId = alkatreszDTO.KategoriaId;
-            MennyisegiEgysegId = alkatreszDTO.MennyisegiEgysegId;
-            Nev = alkatreszDTO.Nev;
-            Tipus = alkatreszDTO.Tipus;
-            Cikkszam = alkatreszDTO.Cikkszam;
-            Leiras = alkatreszDTO.Leiras;
-        }
         public int Id { get; set; }
         public int GyartoId { get; set; }
         public int KategoriaId { get; set; }
@@ -38,7 +18,21 @@ namespace Raktarkezeles.API.Models
         public virtual Kategoria Kategoria { get; set; }
         public virtual MennyisegiEgyseg MennyisegiEgyseg { get; set; }
         public virtual ICollection<AlkatreszElofordulas> AlkatreszElofordulasok { get; set; }
-
+        public Alkatresz()
+        {
+            AlkatreszElofordulasok = new List<AlkatreszElofordulas>();
+        }
+        public Alkatresz(AlkatreszDTO alkatreszDTO)
+        {
+            GyartoId = alkatreszDTO.GyartoId;
+            KategoriaId = alkatreszDTO.KategoriaId;
+            MennyisegiEgysegId = alkatreszDTO.MennyisegiEgysegId;
+            Nev = alkatreszDTO.Nev;
+            Tipus = alkatreszDTO.Tipus;
+            Cikkszam = alkatreszDTO.Cikkszam;
+            Leiras = alkatreszDTO.Leiras;
+            AlkatreszElofordulasok = new List<AlkatreszElofordulas>();
+        }
         public bool ShouldSerializeFoto() { return false; }
     }
 }

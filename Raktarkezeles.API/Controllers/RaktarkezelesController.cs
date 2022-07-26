@@ -127,7 +127,7 @@ namespace Raktarkezeles.API.Controllers
 
         [HttpGet]
         [Route("/alkatreszek/{id}/foto")]
-        public async Task<ActionResult> GetAlkatreszFoto(int id)
+        public async Task<ActionResult<byte[]>> GetAlkatreszFoto(int id)
         {
             var result = await _context.Alkatreszek.FindAsync(id);
             if (result == null)
@@ -138,8 +138,7 @@ namespace Raktarkezeles.API.Controllers
             {
                 return NotFound();
             }
-            var image = new MemoryStream(result.Foto);
-            return File(image, "image/jpeg");
+            return File(new MemoryStream(result.Foto), "image/jpeg");
         }
 
         [HttpPost]
@@ -158,18 +157,6 @@ namespace Raktarkezeles.API.Controllers
             }
             await _context.SaveChangesAsync();
             return Ok();
-        }
-
-        [HttpGet]
-        [Route("/elofordulasok/{id}")]
-        public async Task<ActionResult<AlkatreszElofordulas>> GetElofordulas(int id)
-        {
-            var result = await _context.AlkatreszElofordulasok.Include(x => x.RaktarozasiHely).FirstOrDefaultAsync(x => x.Id == id);
-            if (result == null)
-            {
-                return NotFound();
-            }
-            return Ok(result);
         }
 
         [HttpPost]

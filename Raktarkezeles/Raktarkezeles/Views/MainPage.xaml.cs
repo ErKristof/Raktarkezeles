@@ -18,10 +18,5 @@ namespace Raktarkezeles.Views
         {
             InitializeComponent();
         }
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            (BindingContext as MainViewModel).OnAppearing();
-        }
     }
 }

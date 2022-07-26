@@ -1,95 +1,106 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Xamarin.Forms;
 using Raktarkezeles.Models;
 using System.Windows.Input;
 using Raktarkezeles.MVVM;
 using Raktarkezeles.Services;
 using System.Collections.ObjectModel;
+using System.Net.Http;
 
 namespace Raktarkezeles.ViewModels
 {
     public class NewOccurrenceViewModel : BindableBase
     {
-        private RaktarkezelesService service = new RaktarkezelesService();
-        private Alkatresz part;
-        private ObservableCollection<RaktarozasiHely> warehouses = new ObservableCollection<RaktarozasiHely>();
-        public ObservableCollection<RaktarozasiHely> Warehouses
+        private IRaktarService service = new LocalRaktarkezelesService();
+        private Alkatresz alkatresz;
+        public ObservableCollection<RaktarozasiHely> RaktarozasiHelyek { get; set; } = new ObservableCollection<RaktarozasiHely>();
+        private RaktarozasiHely raktarozasiHely;
+        public RaktarozasiHely RaktarozasiHely
         {
-            get
-            {
-                return warehouses;
-            }
-            set
-            {
-                warehouses = value;
-            }
+            get { return raktarozasiHely; }
+            set { raktarozasiHely = value; OnPropertyChanged(); }
         }
-        private RaktarozasiHely warehouse;
-        public RaktarozasiHely Warehouse
+        private string polc;
+        public string Polc
         {
-            get { return warehouse; }
-            set { warehouse = value; OnPropertyChanged(); }
+            get { return polc; }
+            set { polc = value; OnPropertyChanged(); }
         }
-        private string rack;
-        public string Rack
+        private string szint;
+        public string Szint
         {
-            get { return rack; }
-            set { rack = value; OnPropertyChanged(); }
+            get { return szint; }
+            set { szint = value; OnPropertyChanged(); }
         }
-        private string shelf;
-        public string Shelf
+        private string mennyiseg;
+        public string Mennyiseg
         {
-            get { return shelf; }
-            set { shelf = value; OnPropertyChanged(); }
+            get { return mennyiseg; }
+            set { mennyiseg = value; OnPropertyChanged(); }
         }
-        private string quantity;
-        public string Quantity
+        private bool invalidRaktarozasiHely = false;
+        public bool InvalidRaktarozasiHely
         {
-            get { return quantity; }
-            set { quantity = value; OnPropertyChanged(); }
+            get { return invalidRaktarozasiHely; }
+            set { invalidRaktarozasiHely = value; OnPropertyChanged(); }
         }
-        private bool invalidWarehouse = false;
-        public bool InvalidWarehouse { get { return invalidWarehouse; } set { invalidWarehouse = value; OnPropertyChanged(); } }
-        private bool invalidRack = false;
-        public bool InvalidRack { get { return invalidRack; } set { invalidRack = value; OnPropertyChanged(); } }
-        private bool invalidShelf = false;
-        public bool InvalidShelf { get { return invalidShelf; } set { invalidShelf = value; OnPropertyChanged(); } }
-        private bool invalidQuantity = false;
-        public bool InvalidQuantity { get { return invalidQuantity; } set { invalidQuantity = value; OnPropertyChanged(); } }
+        private bool invalidPolc = false;
+        public bool InvalidPolc
+        {
+            get { return invalidPolc; }
+            set { invalidPolc = value; OnPropertyChanged(); }
+        }
+        private bool invalidSzint = false;
+        public bool InvalidSzint
+        {
+            get { return invalidSzint; }
+            set { invalidSzint = value; OnPropertyChanged(); }
+        }
+        private bool invalidMennyiseg = false;
+        public bool InvalidMennyiseg
+        {
+            get { return invalidMennyiseg; }
+            set { invalidMennyiseg = value; OnPropertyChanged(); }
+        }
         public ICommand SaveOccurrenceCommand { protected set; get; }
         public ICommand CancelOccurrenceCommand { protected set; get; }
-        public NewOccurrenceViewModel(Alkatresz part)
+        public NewOccurrenceViewModel(Alkatresz alkatresz)
         {
-            this.part = part;
+            this.alkatresz = alkatresz;
             GetWarehouses();
             SaveOccurrenceCommand = new Command(SaveOccurrenceCommandExecute);
             CancelOccurrenceCommand = new Command(CancelOccurrenceCommandExecute);
         }
         private async void GetWarehouses()
         {
-            foreach(var w in await service.GetRaktarozasiHelyek())
+            try
             {
-                Warehouses.Add(w);
+                RaktarozasiHelyek = await service.GetRaktarozasiHelyek();
             }
+            catch (HttpRequestException HREx) { DependencyService.Get<IAlertService>().LongAlert(HREx.Message); }
+            catch (TimeoutException TEx) { DependencyService.Get<IAlertService>().LongAlert(TEx.Message); }
         }
 
         private async void SaveOccurrenceCommandExecute()
         {
-            if (!CheckValidation())
+            if (CheckValidation())
             {
-                AlkatreszElofordulas occurrence = new AlkatreszElofordulas();
-                occurrence.AlkatreszId = part.Id;
-                occurrence.Alkatresz = part;
-                occurrence.RaktarozasiHely = warehouse;
-                occurrence.RaktarozasiHelyId = occurrence.RaktarozasiHely.Id;
-                occurrence.Polc = int.Parse(rack);
-                occurrence.Szint = int.Parse(shelf);
-                occurrence.Mennyiseg = int.Parse(quantity);
-                occurrence = await service.PostElofodulas(occurrence);
-                MessagingCenter.Send(this, "NewOccurrence", occurrence);
-                await Application.Current.MainPage.Navigation.PopModalAsync();
+                AlkatreszElofordulas elofordulas = new AlkatreszElofordulas();
+                elofordulas.AlkatreszId = alkatresz.Id;
+                elofordulas.Alkatresz = alkatresz;
+                elofordulas.RaktarozasiHely = raktarozasiHely;
+                elofordulas.RaktarozasiHelyId = elofordulas.RaktarozasiHely.Id;
+                elofordulas.Polc = int.Parse(polc);
+                elofordulas.Szint = int.Parse(szint);
+                elofordulas.Mennyiseg = int.Parse(mennyiseg);
+                try
+                {
+                    elofordulas = await service.PostElofodulas(elofordulas);
+                    MessagingCenter.Send(this, "NewOccurrence", elofordulas);
+                    await Application.Current.MainPage.Navigation.PopModalAsync();
+                }
+                catch (HttpRequestException HREx) { DependencyService.Get<IAlertService>().LongAlert(HREx.Message); }
+                catch (TimeoutException TEx) { DependencyService.Get<IAlertService>().LongAlert(TEx.Message); }
             }
         }
         private async void CancelOccurrenceCommandExecute()
@@ -98,12 +109,11 @@ namespace Raktarkezeles.ViewModels
         }
         private bool CheckValidation()
         {
-            InvalidWarehouse = Warehouse == null;
-            int result;
-            InvalidRack = !int.TryParse(Rack, out result);
-            InvalidShelf = !int.TryParse(Shelf, out result);
-            InvalidQuantity = !int.TryParse(Quantity, out result);
-            return InvalidWarehouse || InvalidRack || InvalidShelf || InvalidQuantity;
+            InvalidRaktarozasiHely = RaktarozasiHely.Id == -1;
+            InvalidPolc = !int.TryParse(Polc, out _);
+            InvalidSzint = !int.TryParse(Szint, out _);
+            InvalidMennyiseg = !int.TryParse(Mennyiseg, out _);
+            return !(InvalidRaktarozasiHely || InvalidPolc || InvalidSzint || InvalidMennyiseg);
         }
     }
 }

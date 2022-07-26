@@ -1,282 +1,280 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
 using Raktarkezeles.Models;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Collections.ObjectModel;
-using Raktarkezeles.DAL;
 using Xamarin.Forms;
 using System.Windows.Input;
 using Raktarkezeles.MVVM;
-using System.Threading.Tasks;
 using Xamarin.Essentials;
 using System.IO;
 using ZXing.Mobile;
 using ZXing;
 using Raktarkezeles.Services;
+using System.Net.Http;
 
 namespace Raktarkezeles.ViewModels
 {
     public class NewPartViewModel : BindableBase
     {
-        private RaktarkezelesService service = new RaktarkezelesService();
-        private Alkatresz part;
-        private string name;
-        public string Name
+        private IRaktarService service = new LocalRaktarkezelesService();
+        private Alkatresz alkatresz;
+        private string nev;
+        public string Nev
         {
             get
             {
-                return name;
+                return nev;
             }
             set
             {
-                if (name != value)
+                if (nev != value)
                 {
-                    name = value;
+                    nev = value;
                     OnPropertyChanged();
                 }
             }
         }
-        private Gyarto manufacturer;
-        public Gyarto Manufacturer
+        private Gyarto gyarto;
+        public Gyarto Gyarto
         {
             get
             {
-                return manufacturer;
+                return gyarto;
             }
             set
             {
-                if (manufacturer != value)
+                if (gyarto != value)
                 {
-                    manufacturer = value;
+                    gyarto = value;
                     OnPropertyChanged();
                 }
             }
         }
-        private string typeNumber;
-        public string TypeNumber
+        private string tipus;
+        public string Tipus
         {
             get
             {
-                return typeNumber;
+                return tipus;
             }
             set
             {
-                if (typeNumber != value)
+                if (tipus != value)
                 {
-                    typeNumber = value;
+                    tipus = value;
                     OnPropertyChanged();
                 }
             }
         }
-        private string itemNumber;
-        public string ItemNumber
+        private string cikkszam;
+        public string Cikkszam
         {
             get
             {
-                return itemNumber;
+                return cikkszam;
             }
             set
             {
-                if(itemNumber != value)
+                if (cikkszam != value)
                 {
-                    itemNumber = value;
+                    cikkszam = value;
                     OnPropertyChanged();
                 }
             }
         }
-        private MennyisegiEgyseg unit;
-        public MennyisegiEgyseg Unit
+        private MennyisegiEgyseg mennyisegiEgyseg;
+        public MennyisegiEgyseg MennyisegiEgyseg
         {
             get
             {
-                return unit;
+                return mennyisegiEgyseg;
             }
             set
             {
-                if(unit != value)
+                if (mennyisegiEgyseg != value)
                 {
-                    unit = value;
+                    mennyisegiEgyseg = value;
                     OnPropertyChanged();
                 }
             }
         }
-        private Kategoria category;
-        public Kategoria Category
+        private Kategoria kategoria;
+        public Kategoria Kategoria
         {
             get
             {
-                return category;
+                return kategoria;
             }
             set
             {
-                if(category != value)
+                if (kategoria != value)
                 {
-                    category = value;
+                    kategoria = value;
                     OnPropertyChanged();
                 }
             }
         }
-        private string description;
-        public string Description
+        private string leiras;
+        public string Leiras
         {
             get
             {
-                return description;
+                return leiras;
             }
             set
             {
-                if(description != value)
+                if (leiras != value)
                 {
-                    description = value;
+                    leiras = value;
                     OnPropertyChanged();
                 }
             }
         }
-        private byte[] image;
-        public byte[] Image
+        private byte[] eredetiFoto;
+        private byte[] foto;
+        public byte[] Foto
         {
             get
             {
-                return image;
+                return foto;
             }
             set
             {
-                if(image != value)
+                if (foto != value)
                 {
-                    image = value;
+                    foto = value;
                     OnPropertyChanged();
                 }
             }
         }
-        public ICommand AddPartCommand { protected set; get; }
+        public ICommand AddPartCommand { private set; get; }
         public ICommand TakePictureCommand { private set; get; }
         public ICommand ScanBarcodeCommand { private set; get; }
+        public ICommand RotateImageCommand { private set; get; }
 
-        private bool invalidName = false;
-        public bool InvalidName { get { return invalidName; } set { invalidName = value; OnPropertyChanged(); } }
-        private bool invalidManufacturer = false;
-        public bool InvalidManufacturer { get { return invalidManufacturer; } set { invalidManufacturer = value; OnPropertyChanged(); } }
-        private bool invalidTypeNumber = false;
-        public bool InvalidTypeNumber { get { return invalidTypeNumber; } set { invalidTypeNumber = value; OnPropertyChanged(); } }
-        private bool invalidItemNumber = false;
-        public bool InvalidItemNumber { get { return invalidItemNumber; } set { invalidItemNumber = value; OnPropertyChanged(); } }
-        private bool invalidUnit = false;
-        public bool InvalidUnit { get { return invalidUnit; } set { invalidUnit = value; OnPropertyChanged(); } }
-        private bool invalidCategory = false;
-        public bool InvalidCategory { get { return invalidCategory; } set { invalidCategory = value; OnPropertyChanged(); } }
-        private bool invalidImage = false;
-        public bool InvalidImage { get { return invalidImage; } set { invalidImage = value; OnPropertyChanged(); } }
- 
-        private ObservableCollection<Gyarto> manufacturers = new ObservableCollection<Gyarto>();
-        private ObservableCollection<Kategoria> categories = new ObservableCollection<Kategoria>();
-        private ObservableCollection<MennyisegiEgyseg> units = new ObservableCollection<MennyisegiEgyseg>();
+        private bool invalidNev = false;
+        public bool InvalidNev { get { return invalidNev; } set { invalidNev = value; OnPropertyChanged(); } }
+        private bool invalidGyarto = false;
+        public bool InvalidGyarto { get { return invalidGyarto; } set { invalidGyarto = value; OnPropertyChanged(); } }
+        private bool invalidTipus = false;
+        public bool InvalidTipus { get { return invalidTipus; } set { invalidTipus = value; OnPropertyChanged(); } }
+        private bool invalidCikkszam = false;
+        public bool InvalidCikkszam { get { return invalidCikkszam; } set { invalidCikkszam = value; OnPropertyChanged(); } }
+        private bool invalidMennyisegiEgyseg = false;
+        public bool InvalidMennyisegiEgyseg { get { return invalidMennyisegiEgyseg; } set { invalidMennyisegiEgyseg = value; OnPropertyChanged(); } }
+        private bool invalidKategoria = false;
+        public bool InvalidKategoria { get { return invalidKategoria; } set { invalidKategoria = value; OnPropertyChanged(); } }
+        private bool invalidFoto = false;
+        public bool InvalidFoto { get { return invalidFoto; } set { invalidFoto = value; OnPropertyChanged(); } }
 
-        public ObservableCollection<Gyarto> Manufacturers
-        {
-            get { return manufacturers; }
-            set { manufacturers = value; }
-        }
-        public ObservableCollection<Kategoria> Categories
-        {
-            get { return categories; }
-            set { categories = value; }
-        }
-        public ObservableCollection<MennyisegiEgyseg> Units
-        {
-            get { return units; }
-            set { units = value; }
-        }
+        public ObservableCollection<Gyarto> Gyartok { get; set; } = new ObservableCollection<Gyarto>();
+        public ObservableCollection<Kategoria> Kategoriak { get; set; } = new ObservableCollection<Kategoria>();
+        public ObservableCollection<MennyisegiEgyseg> MennyisegiEgysegek { get; set; } = new ObservableCollection<MennyisegiEgyseg>();
 
         public NewPartViewModel(Alkatresz newPart = null)
         {
             Setup(newPart);
-            if(newPart != null)
-            {
-                AddPartCommand = new Command(SavePartCommandExecute);
-            }
-            else
-            {
-                AddPartCommand = new Command(AddPartCommandExecute);
-            }
+            AddPartCommand = newPart == null ? new Command(AddPartCommandExecute) : new Command(SavePartCommandExecute);
             TakePictureCommand = new Command(TakePictureComandExecute);
             ScanBarcodeCommand = new Command(ScanBarcodeCommandExecute);
+            RotateImageCommand = new Command(RotateImageCommandExecute);
         }
-        private async void Setup(Alkatresz newPart = null)
+        private async void Setup(Alkatresz newPart)
         {
-            await GetLists();
+            try
+            {
+                Gyartok = await service.GetGyartok();
+                Kategoriak = await service.GetKategoriak();
+                MennyisegiEgysegek = await service.GetMennyisegiEgysegek();
+            }
+            catch (HttpRequestException HREx) { DependencyService.Get<IAlertService>().LongAlert(HREx.Message); }
+            catch (TimeoutException TEx) { DependencyService.Get<IAlertService>().LongAlert(TEx.Message); }
             if (newPart != null)
             {
-                part = newPart;
-                //Image = newPart.Foto;
-                Name = newPart.Nev;
-                Manufacturer = Manufacturers.First(x => x.Id == newPart.GyartoId);
-                TypeNumber = newPart.Tipus;
-                ItemNumber = newPart.Cikkszam;
-                Unit = Units.First(x => x.Id == newPart.MennyisegiEgysegId);
-                Category = Categories.First(x => x.Id == newPart.KategoriaId);
-                Description = newPart.Leiras;
+                alkatresz = newPart;
+                Foto = newPart.Foto;
+                Nev = newPart.Nev;
+                Gyarto = newPart.Gyarto;
+                Tipus = newPart.Tipus;
+                Cikkszam = newPart.Cikkszam;
+                MennyisegiEgyseg = newPart.MennyisegiEgyseg;
+                Kategoria = newPart.Kategoria;
+                Leiras = newPart.Leiras;
             }
         }
-        private async Task GetLists()
-        {
-            foreach (var m in await service.GetGyartok())
-            {
-                Manufacturers.Add(m);
-            }
-            foreach (var c in await service.GetKategoria())
-            {
-                Categories.Add(c);
-            }
-            foreach (var u in await service.GetMennyisegiEgysegek())
-            {
-                Units.Add(u);
-            }
-        }
-
         private async void AddPartCommandExecute()
         {
-            if (!CheckValidation())
+            if (CheckValidation())
             {
-                Alkatresz newPart = new Alkatresz
+                Alkatresz newAlkatresz = new Alkatresz
                 {
-                    //Foto = Image,
-                    Nev = Name,
-                    Gyarto = Manufacturer,
-                    GyartoId = Manufacturer.Id,
-                    Tipus = TypeNumber,
-                    Cikkszam = ItemNumber,
-                    MennyisegiEgyseg = Unit,
-                    MennyisegiEgysegId = Unit.Id,
-                    Kategoria = Category,
-                    KategoriaId = Category.Id,
-                    Leiras = Description,
-                    AlkatreszElofordulasok = new ObservableCollection<AlkatreszElofordulas>()
+                    Foto = Foto,
+                    Nev = Nev,
+                    Gyarto = Gyarto,
+                    GyartoId = Gyarto.Id,
+                    Tipus = Tipus,
+                    Cikkszam = Cikkszam,
+                    MennyisegiEgyseg = MennyisegiEgyseg,
+                    MennyisegiEgysegId = MennyisegiEgyseg.Id,
+                    Kategoria = Kategoria,
+                    KategoriaId = Kategoria.Id,
+                    Leiras = Leiras
                 };
-                newPart = await service.PostAlkatresz(newPart);
-                await Application.Current.MainPage.Navigation.PopAsync();
+                try
+                {
+                    Alkatresz resultAlkatresz = await service.PostAlkatresz(newAlkatresz);
+                    newAlkatresz.Id = resultAlkatresz.Id;
+                    if (Foto != null)
+                    {
+                        await service.PostFoto(newAlkatresz.Id, Foto);
+                    }
+                    MessagingCenter.Send(this, "Added", newAlkatresz);
+                    await Application.Current.MainPage.Navigation.PopAsync();
+                }
+                catch (HttpRequestException HREx) { DependencyService.Get<IAlertService>().LongAlert(HREx.Message); }
+                catch (TimeoutException TEx) { DependencyService.Get<IAlertService>().LongAlert(TEx.Message); }
             }
         }
-
         private async void SavePartCommandExecute()
         {
-            if (!CheckValidation())
+            if (CheckValidation())
             {
-                //part.Foto = Image;
-                part.Nev = Name;
-                part.Gyarto = Manufacturer;
-                part.GyartoId = Manufacturer.Id;
-                part.Tipus = TypeNumber;
-                part.Cikkszam = ItemNumber;
-                part.MennyisegiEgyseg = Unit;
-                part.MennyisegiEgysegId = Unit.Id;
-                part.Kategoria = Category;
-                part.KategoriaId = Category.Id;
-                part.Leiras = Description;
-                await service.PutAlkatresz(part);
-                await Application.Current.MainPage.Navigation.PopAsync();
+                Alkatresz newAlkatresz = new Alkatresz
+                {
+                    Id = alkatresz.Id,
+                    Foto = Foto,
+                    Nev = Nev,
+                    Gyarto = Gyarto,
+                    GyartoId = Gyarto.Id,
+                    Tipus = Tipus,
+                    Cikkszam = Cikkszam,
+                    MennyisegiEgyseg = MennyisegiEgyseg,
+                    MennyisegiEgysegId = MennyisegiEgyseg.Id,
+                    Kategoria = Kategoria,
+                    KategoriaId = Kategoria.Id,
+                    Leiras = Leiras
+                };
+                try
+                {
+                    Alkatresz resultAlkatresz = await service.UpdateAlkatresz(newAlkatresz);
+                    if (alkatresz.Foto != Foto)
+                    {
+                        await service.PostFoto(alkatresz.Id, Foto);
+                        alkatresz.Foto = Foto;
+                    }
+                    alkatresz.Nev = Nev;
+                    alkatresz.Gyarto = Gyarto;
+                    alkatresz.GyartoId = Gyarto.Id;
+                    alkatresz.Tipus = Tipus;
+                    alkatresz.Cikkszam = Cikkszam;
+                    alkatresz.MennyisegiEgyseg = MennyisegiEgyseg;
+                    alkatresz.MennyisegiEgysegId = MennyisegiEgyseg.Id;
+                    alkatresz.Kategoria = Kategoria;
+                    alkatresz.KategoriaId = Kategoria.Id;
+                    alkatresz.Leiras = Leiras;
+                    await Application.Current.MainPage.Navigation.PopAsync();
+                }
+                catch (HttpRequestException HREx) { DependencyService.Get<IAlertService>().LongAlert(HREx.Message); }
+                catch (TimeoutException TEx) { DependencyService.Get<IAlertService>().LongAlert(TEx.Message); }
             }
         }
 
@@ -285,7 +283,7 @@ namespace Raktarkezeles.ViewModels
             try
             {
                 var photo = await MediaPicker.CapturePhotoAsync();
-                if(photo == null)
+                if (photo == null)
                 {
                     return;
                 }
@@ -293,22 +291,21 @@ namespace Raktarkezeles.ViewModels
                 using (MemoryStream ms = new MemoryStream())
                 {
                     stream.CopyTo(ms);
-                    var rotatedImage = 
-                    Image = ms.ToArray();
+                    eredetiFoto = ms.ToArray();
+                    Foto = DependencyService.Get<IMediaService>().ResizeImageByte(eredetiFoto, 500, 500);
                 }
-                
             }
             catch (FeatureNotSupportedException fnsEx)
             {
-                await Application.Current.MainPage.DisplayAlert("Exception", fnsEx.Message,"OK");
+                DependencyService.Get<IAlertService>().LongAlert(fnsEx.Message);
             }
             catch (PermissionException pEx)
             {
-                await Application.Current.MainPage.DisplayAlert("Exception", pEx.Message, "OK");
+                DependencyService.Get<IAlertService>().LongAlert(pEx.Message);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                await Application.Current.MainPage.DisplayAlert("Exception", ex.Message, "OK");
+                DependencyService.Get<IAlertService>().LongAlert(ex.Message);
             }
         }
         private async void ScanBarcodeCommandExecute()
@@ -317,19 +314,26 @@ namespace Raktarkezeles.ViewModels
             Result result = await scanner.Scan();
             if (result != null)
             {
-                ItemNumber = result.Text;
+                Cikkszam = result.Text;
+            }
+        }
+        private void RotateImageCommandExecute()
+        {
+            if (eredetiFoto != null)
+            {
+                eredetiFoto = DependencyService.Get<IRotationService>().RotateImage(eredetiFoto, 90);
+                Foto = DependencyService.Get<IMediaService>().ResizeImageByte(eredetiFoto, 500, 500);
             }
         }
         private bool CheckValidation()
         {
-            //InvalidImage = Image == null;
-            InvalidName = string.IsNullOrWhiteSpace(Name);
-            InvalidManufacturer = Manufacturer == null;
-            InvalidTypeNumber = string.IsNullOrWhiteSpace(TypeNumber);
-            InvalidItemNumber = string.IsNullOrWhiteSpace(ItemNumber);
-            InvalidUnit = Unit == null;
-            InvalidCategory = Category == null;
-            return InvalidImage || InvalidName || InvalidManufacturer || InvalidTypeNumber || InvalidItemNumber || InvalidUnit || InvalidCategory;
+            InvalidNev = string.IsNullOrWhiteSpace(Nev);
+            InvalidGyarto = Gyarto.Id == -1;
+            InvalidTipus = string.IsNullOrWhiteSpace(Tipus);
+            InvalidCikkszam = string.IsNullOrWhiteSpace(Cikkszam);
+            InvalidMennyisegiEgyseg = MennyisegiEgyseg.Id == -1;
+            InvalidKategoria = Kategoria.Id == -1;
+            return !(InvalidFoto || InvalidNev || InvalidGyarto || InvalidTipus || InvalidCikkszam || InvalidMennyisegiEgyseg || InvalidKategoria);
         }
     }
 }

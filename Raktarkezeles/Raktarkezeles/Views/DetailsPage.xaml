@@ -27,18 +27,18 @@
         </ToolbarItem>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
-        <CollectionView SelectionMode="None" ItemsSource="{Binding Occurrences}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="White">
+        <CollectionView SelectionMode="None" ItemsSource="{Binding Elofordulasok}" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="White">
             <CollectionView.Header>
                 <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" x:DataType="viewmodel:DetailsViewModel" >
-                    <Image Source="{Binding Image, Converter={StaticResource byteToImage}, TargetNullValue={mvvm:ImageResource Raktarkezeles.Resources.Images.placeholder.png}}" Aspect="AspectFill" HeightRequest="240"/>
+                    <Image Source="{Binding Foto, Converter={StaticResource byteToImage}, TargetNullValue={mvvm:ImageResource Raktarkezeles.Resources.Images.placeholder.png}}" Aspect="AspectFill" HeightRequest="240"/>
                     <StackLayout Orientation="Horizontal" Padding="5,5,5,5" HorizontalOptions="Fill" VerticalOptions="Fill">
-                        <Label Text="{Binding Name}" FontSize="24" FontAttributes="Bold" TextColor="Black" LineBreakMode="TailTruncation" VerticalOptions="End" HorizontalOptions="FillAndExpand"/>
-                        <Label Text="{Binding Manufacturer.TeljesNev}" FontSize="14" TextColor="Black" LineBreakMode="TailTruncation" VerticalOptions="End" HorizontalOptions="EndAndExpand" HorizontalTextAlignment="End"/>
+                        <Label Text="{Binding Nev}" FontSize="24" FontAttributes="Bold" TextColor="Black" LineBreakMode="TailTruncation" VerticalOptions="End" HorizontalOptions="FillAndExpand"/>
+                        <Label Text="{Binding Gyarto.TeljesNev}" FontSize="14" TextColor="Black" LineBreakMode="TailTruncation" VerticalOptions="End" HorizontalOptions="EndAndExpand" HorizontalTextAlignment="End"/>
                     </StackLayout>
-                    <Label Text="{Binding TypeNumber, StringFormat='{}Típus: {0}'}" FontSize="16" TextColor="Black" Padding="7,0,0,0"/>
-                    <Label Text="{Binding ItemNumber, StringFormat='{}Cikkszám: {0}'}" FontSize="16" TextColor="Black" Padding="7,0,0,0"/>
+                    <Label Text="{Binding Tipus, StringFormat='{}Típus: {0}'}" FontSize="16" TextColor="Black" Padding="7,0,0,0"/>
+                    <Label Text="{Binding Cikkszam, StringFormat='{}Cikkszám: {0}'}" FontSize="16" TextColor="Black" Padding="7,0,0,0"/>
                     <Label Text="Leírás:" FontSize="16" Padding="7,0,0,0" TextColor="Black" HorizontalOptions="Fill" VerticalOptions="Fill"/>
-                    <Label Text="{Binding Description}" Padding="7,0,7,0" FontSize="14" TextColor="Black"  LineBreakMode="WordWrap" HorizontalOptions="Fill" VerticalOptions="Fill"/>
+                    <Label Text="{Binding Leiras}" Padding="7,0,7,0" FontSize="14" TextColor="Black"  LineBreakMode="WordWrap" HorizontalOptions="Fill" VerticalOptions="Fill"/>
                 </StackLayout>
             </CollectionView.Header>
             <CollectionView.ItemTemplate>

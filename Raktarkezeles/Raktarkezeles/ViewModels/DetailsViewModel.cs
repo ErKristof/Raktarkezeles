@@ -1,138 +1,135 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 using Raktarkezeles.Models;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using Xamarin.Forms;
 using System.Windows.Input;
 using Raktarkezeles.Views;
 using Raktarkezeles.MVVM;
 using System.Linq;
 using Raktarkezeles.Services;
+using System.Net.Http;
 
 namespace Raktarkezeles.ViewModels
 {
     public class DetailsViewModel : BindableBase
     {
-        private RaktarkezelesService service = new RaktarkezelesService();
-        private Alkatresz part;
-        private byte[] image;
-        public byte[] Image
+        private IRaktarService service = new LocalRaktarkezelesService();
+        private Alkatresz alkatresz;
+        private byte[] foto;
+        public byte[] Foto
         {
             get
             {
-                return image;
+                return foto;
             }
             set
             {
-                if (image != value)
+                if (foto != value)
                 {
-                    image = value;
+                    foto = value;
                     OnPropertyChanged();
                 }
             }
         }
-        private string name;
-        public string Name
+        private string nev;
+        public string Nev
         {
             get
             {
-                return name;
+                return nev;
             }
             set
             {
-                if (name != value)
+                if (nev != value)
                 {
-                    name = value;
+                    nev = value;
                     OnPropertyChanged();
                 }
             }
         }
-        private Gyarto manufacturer;
-        public Gyarto Manufacturer
+        private Gyarto gyarto;
+        public Gyarto Gyarto
         {
             get
             {
-                return manufacturer;
+                return gyarto;
             }
             set
             {
-                if (manufacturer != value)
+                if (gyarto != value)
                 {
-                    manufacturer = value;
+                    gyarto = value;
                     OnPropertyChanged();
                 }
             }
         }
-        private string itemNumber;
-        public string ItemNumber
+        private string cikkszam;
+        public string Cikkszam
         {
             get
             {
-                return itemNumber;
+                return cikkszam;
             }
             set
             {
-                if (itemNumber != value)
+                if (cikkszam != value)
                 {
-                    itemNumber = value;
+                    cikkszam = value;
                     OnPropertyChanged();
                 }
             }
         }
-        private string typeNumber;
-        public string TypeNumber
+        private string tipus;
+        public string Tipus
         {
             get
             {
-                return typeNumber;
+                return tipus;
             }
             set
             {
-                if (typeNumber != value)
+                if (tipus != value)
                 {
-                    typeNumber = value;
+                    tipus = value;
                     OnPropertyChanged();
                 }
             }
         }
-        private string description;
-        public string Description
+        private string leiras;
+        public string Leiras
         {
             get
             {
-                return description;
+                return leiras;
             }
             set
             {
-                if (description != value)
+                if (leiras != value)
                 {
-                    description = value;
+                    leiras = value;
                     OnPropertyChanged();
                 }
             }
         }
-        public ObservableCollection<AlkatreszElofordulas> Occurrences
+        public ObservableCollection<AlkatreszElofordulas> Elofordulasok
         {
             get
             {
-                return part != null ? part.AlkatreszElofordulasok : null;
+                return alkatresz?.AlkatreszElofordulasok;
             }
         }
 
-        public ICommand EditPartCommand { protected set; get; }
-        public ICommand DeletePartCommand { protected set; get; }
-        public ICommand NewOccurrenceCommand { protected set; get; }
-        public ICommand TransferQuantityCommand { protected set; get; }
-        public ICommand MinusOneCommand { protected set; get; }
-        public ICommand PlusOneCommand { protected set; get; }
+        public ICommand EditPartCommand { private set; get; }
+        public ICommand DeletePartCommand { private set; get; }
+        public ICommand NewOccurrenceCommand { private set; get; }
+        public ICommand TransferQuantityCommand { private set; get; }
+        public ICommand MinusOneCommand { private set; get; }
+        public ICommand PlusOneCommand { private set; get; }
         public ICommand ChangeQuantityCommand { private set; get; }
-        public ICommand DeleteOccurrenceCommnad { protected set; get; }
-        public DetailsViewModel(Alkatresz part)
+        public ICommand DeleteOccurrenceCommnad { private set; get; }
+        public DetailsViewModel(Alkatresz alkatresz)
         {
-            this.part = part;
+            this.alkatresz = alkatresz;
             UpdatePage();
             EditPartCommand = new Command(EditPartCommandExecute);
             DeletePartCommand = new Command(DeletePartCommandExecute);
@@ -145,84 +142,99 @@ namespace Raktarkezeles.ViewModels
         }
         private async void EditPartCommandExecute()
         {
-            NewPartViewModel newPartVM = new NewPartViewModel(part);
+            NewPartViewModel newPartVM = new NewPartViewModel(alkatresz);
             NewPartPage newPartPage = new NewPartPage();
             newPartPage.BindingContext = newPartVM;
             await Application.Current.MainPage.Navigation.PushAsync(newPartPage);
         }
         private async void DeletePartCommandExecute()
         {
-            MessagingCenter.Send(this, "Deleted", part.Id);
-            await service.DeleteAlkatresz(part.Id);
-            await Application.Current.MainPage.Navigation.PopAsync();
+            try
+            {
+                await service.DeleteAlkatresz(alkatresz.Id);
+                MessagingCenter.Send(this, "Deleted", alkatresz.Id);
+                await Application.Current.MainPage.Navigation.PopAsync();
+            }
+            catch(HttpRequestException HREx) { DependencyService.Get<IAlertService>().LongAlert(HREx.Message); }
+            catch(TimeoutException TEx) { DependencyService.Get<IAlertService>().LongAlert(TEx.Message); }
         }
         private async void NewOccurrenceCommandExecute()
         {
             MessagingCenter.Subscribe<NewOccurrenceViewModel, AlkatreszElofordulas>(this, "NewOccurrence", (vm, newOccurrence) =>
             {
-                Occurrences.Add(newOccurrence);
+                Elofordulasok.Add(newOccurrence);
                 MessagingCenter.Unsubscribe<NewOccurrenceViewModel, AlkatreszElofordulas>(this, "NewOccurrence");
             });
-            NewOccurrenceViewModel newOccurrenceVM = new NewOccurrenceViewModel(part);
+            NewOccurrenceViewModel newOccurrenceVM = new NewOccurrenceViewModel(alkatresz);
             NewOccurrencePage newOccurrencePage = new NewOccurrencePage();
             newOccurrencePage.BindingContext = newOccurrenceVM;
             await Application.Current.MainPage.Navigation.PushModalAsync(newOccurrencePage);
         }
         private async void TransferQuantityCommandExecute(int id)
         {
-            TransferQuantityViewModel transferQuantityVM = new TransferQuantityViewModel(Occurrences.FirstOrDefault(o => o.Id == id).Id, part);
+            TransferQuantityViewModel transferQuantityVM = new TransferQuantityViewModel(id, alkatresz);
             TransferQuantityPage transferQuantityPage = new TransferQuantityPage();
             transferQuantityPage.BindingContext = transferQuantityVM;
             await Application.Current.MainPage.Navigation.PushModalAsync(transferQuantityPage);
         }
         private async void ChangeQuantityCommandExecute(int id)
         {
-            QuantityChangeViewModel quantityChangeVM = new QuantityChangeViewModel(Occurrences.FirstOrDefault(o => o.Id == id));
+            QuantityChangeViewModel quantityChangeVM = new QuantityChangeViewModel(Elofordulasok.FirstOrDefault(o => o.Id == id));
             QuantityChangePage quantityChangePage = new QuantityChangePage();
             quantityChangePage.BindingContext = quantityChangeVM;
             await Application.Current.MainPage.Navigation.PushModalAsync(quantityChangePage);
         }
         private async void MinusOneCommandExecute(int id)
         {
-            var changedElofordulas = Occurrences.First(o => o.Id == id);
+            AlkatreszElofordulas changedElofordulas = Elofordulasok.First(o => o.Id == id);
             if (changedElofordulas.Mennyiseg > 0)
             {
-                if (await service.ChangeQuantity(id, changedElofordulas.Mennyiseg - 1))
+                try
                 {
+                    await service.UpdateElofordulasQuantity(id, changedElofordulas.Mennyiseg - 1);
                     changedElofordulas.Mennyiseg--;
                 }
+                catch (HttpRequestException HREx) { DependencyService.Get<IAlertService>().LongAlert(HREx.Message); }
+                catch (TimeoutException TEx) { DependencyService.Get<IAlertService>().LongAlert(TEx.Message); }
             }
         }
         private async void PlusOneCommandExecute(int id)
         {
-            var changedElofordulas = Occurrences.First(o => o.Id == id);
-            if (await service.ChangeQuantity(id, changedElofordulas.Mennyiseg + 1))
+            AlkatreszElofordulas changedElofordulas = Elofordulasok.First(o => o.Id == id);
+            try
             {
+                await service.UpdateElofordulasQuantity(id, changedElofordulas.Mennyiseg + 1);
                 changedElofordulas.Mennyiseg++;
             }
+            catch (HttpRequestException HREx) { DependencyService.Get<IAlertService>().LongAlert(HREx.Message); }
+            catch (TimeoutException TEx) { DependencyService.Get<IAlertService>().LongAlert(TEx.Message); }
         }
         private async void DeleteOccurrenceCommandExecute(int id)
         {
-            await service.DeleteElofordulas(id);
-            Occurrences.Remove(Occurrences.First(x => x.Id == id));
+            try
+            {
+                await service.DeleteElofordulas(id);
+                Elofordulasok.Remove(Elofordulasok.First(x => x.Id == id));
+            }
+            catch (HttpRequestException HREx) { DependencyService.Get<IAlertService>().LongAlert(HREx.Message); }
+            catch (TimeoutException TEx) { DependencyService.Get<IAlertService>().LongAlert(TEx.Message); }
         }
         public override void OnAppearing()
         {
-            base.OnAppearing();
             UpdatePage();
         }
         public void OnDisappearing()
         {
-            MessagingCenter.Send(this, "Updated", part);
+            MessagingCenter.Send(this, "Updated", alkatresz);
         }
         private void UpdatePage()
         {
-            Image = part.Foto;
-            Name = part.Nev;
-            Manufacturer = part.Gyarto;
-            ItemNumber = part.Cikkszam;
-            TypeNumber = part.Tipus;
-            Description = part.Leiras;
+            Foto = alkatresz.Foto;
+            Nev = alkatresz.Nev;
+            Gyarto = alkatresz.Gyarto;
+            Cikkszam = alkatresz.Cikkszam;
+            Tipus = alkatresz.Tipus;
+            Leiras = alkatresz.Leiras;
         }
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Raktarkezeles.API.Models
+﻿namespace Raktarkezeles.API.Models
 {
     public class AlkatreszElofordulasDTO
     {
@@ -13,7 +8,6 @@ namespace Raktarkezeles.API.Models
         public short Polc { get; set; }
         public short Szint { get; set; }
         public int Mennyiseg { get; set; }
-
         public AlkatreszElofordulasDTO() { }
         public AlkatreszElofordulasDTO(AlkatreszElofordulas alkatreszElofordulas)
         {

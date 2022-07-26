@@ -11,13 +11,13 @@
                 <Label FontSize="Title" HorizontalOptions="Center" TextColor="Black">
                     <Label.Text>
                         <MultiBinding StringFormat="{}{0} {1}">
-                            <Binding Path="Occurrence.Mennyiseg"/>
-                            <Binding Path="Occurrence.Alkatresz.MennyisegiEgyseg.RovidNev"/>
+                            <Binding Path="Elofordulas.Mennyiseg"/>
+                            <Binding Path="Elofordulas.Alkatresz.MennyisegiEgyseg.RovidNev"/>
                         </MultiBinding>
                     </Label.Text>
                 </Label>
-                <Entry Placeholder="Mennyiség változtatás" Text="{Binding Quantity}" Keyboard="Numeric" FontSize="20"/>
-                <Label Text="Mennyiség nincs helyesen megadva!" TextColor="Red" IsVisible="{Binding InvalidQuantity}" BackgroundColor="White"/>
+                <Entry Placeholder="Mennyiség változtatás" Text="{Binding Mennyiseg}" Keyboard="Numeric" FontSize="20"/>
+                <Label Text="Mennyiség nincs helyesen megadva!" TextColor="Red" IsVisible="{Binding InvalidMennyiseg}" BackgroundColor="White"/>
                 <StackLayout Orientation="Horizontal" Margin="0,10,0,0">
                     <Button Text="Csökkentés" HorizontalOptions="FillAndExpand" Command="{Binding SubtractQuantityCommand}"/>
                     <Button Text="Növelés" HorizontalOptions="FillAndExpand" Command="{Binding AddQuantityCommand}"/>
