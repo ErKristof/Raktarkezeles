@@ -16,8 +16,9 @@ namespace Raktarkezeles.ViewModels
     public class NewPartViewModel : BindableBase
     {
         private IRaktarService service = new LocalRaktarkezelesService();
-        private Alkatresz alkatresz;
-        private string nev;
+        private bool ujFoto = false;
+        private Alkatresz alkatresz = new Alkatresz();
+        private string nev = "";
         public string Nev
         {
             get
@@ -33,7 +34,7 @@ namespace Raktarkezeles.ViewModels
                 }
             }
         }
-        private Gyarto gyarto;
+        private Gyarto gyarto = new Gyarto();
         public Gyarto Gyarto
         {
             get
@@ -49,7 +50,7 @@ namespace Raktarkezeles.ViewModels
                 }
             }
         }
-        private string tipus;
+        private string tipus = "";
         public string Tipus
         {
             get
@@ -65,7 +66,7 @@ namespace Raktarkezeles.ViewModels
                 }
             }
         }
-        private string cikkszam;
+        private string cikkszam = "";
         public string Cikkszam
         {
             get
@@ -81,7 +82,7 @@ namespace Raktarkezeles.ViewModels
                 }
             }
         }
-        private MennyisegiEgyseg mennyisegiEgyseg;
+        private MennyisegiEgyseg mennyisegiEgyseg = new MennyisegiEgyseg();
         public MennyisegiEgyseg MennyisegiEgyseg
         {
             get
@@ -97,7 +98,7 @@ namespace Raktarkezeles.ViewModels
                 }
             }
         }
-        private Kategoria kategoria;
+        private Kategoria kategoria = new Kategoria();
         public Kategoria Kategoria
         {
             get
@@ -113,7 +114,7 @@ namespace Raktarkezeles.ViewModels
                 }
             }
         }
-        private string leiras;
+        private string leiras = "";
         public string Leiras
         {
             get
@@ -147,6 +148,7 @@ namespace Raktarkezeles.ViewModels
             }
         }
         public ICommand AddPartCommand { private set; get; }
+        public ICommand CancelCommand { private set; get; }
         public ICommand TakePictureCommand { private set; get; }
         public ICommand ScanBarcodeCommand { private set; get; }
         public ICommand RotateImageCommand { private set; get; }
@@ -176,7 +178,8 @@ namespace Raktarkezeles.ViewModels
             AddPartCommand = newPart == null ? new Command(AddPartCommandExecute) : new Command(SavePartCommandExecute);
             TakePictureCommand = new Command(TakePictureComandExecute);
             ScanBarcodeCommand = new Command(ScanBarcodeCommandExecute);
-            RotateImageCommand = new Command(RotateImageCommandExecute);
+            RotateImageCommand = new Command<string>(RotateImageCommandExecute);
+            CancelCommand = new Command(CancelCommandExecute);
         }
         private async void Setup(Alkatresz newPart)
         {
@@ -191,6 +194,7 @@ namespace Raktarkezeles.ViewModels
             if (newPart != null)
             {
                 alkatresz = newPart;
+                eredetiFoto = newPart.Foto;
                 Foto = newPart.Foto;
                 Nev = newPart.Nev;
                 Gyarto = newPart.Gyarto;
@@ -294,6 +298,7 @@ namespace Raktarkezeles.ViewModels
                     eredetiFoto = ms.ToArray();
                     Foto = DependencyService.Get<IMediaService>().ResizeImageByte(eredetiFoto, 500, 500);
                 }
+                ujFoto = true;
             }
             catch (FeatureNotSupportedException fnsEx)
             {
@@ -317,12 +322,19 @@ namespace Raktarkezeles.ViewModels
                 Cikkszam = result.Text;
             }
         }
-        private void RotateImageCommandExecute()
+        private void RotateImageCommandExecute(string degree)
         {
             if (eredetiFoto != null)
             {
-                eredetiFoto = DependencyService.Get<IRotationService>().RotateImage(eredetiFoto, 90);
-                Foto = DependencyService.Get<IMediaService>().ResizeImageByte(eredetiFoto, 500, 500);
+                eredetiFoto = DependencyService.Get<IRotationService>().RotateImage(eredetiFoto, int.Parse(degree));
+                if (ujFoto)
+                {
+                    Foto = DependencyService.Get<IMediaService>().ResizeImageByte(eredetiFoto, 500, 500);
+                }
+                else
+                {
+                    Foto = eredetiFoto;
+                }
             }
         }
         private bool CheckValidation()
@@ -334,6 +346,41 @@ namespace Raktarkezeles.ViewModels
             InvalidMennyisegiEgyseg = MennyisegiEgyseg.Id == -1;
             InvalidKategoria = Kategoria.Id == -1;
             return !(InvalidFoto || InvalidNev || InvalidGyarto || InvalidTipus || InvalidCikkszam || InvalidMennyisegiEgyseg || InvalidKategoria);
+        }
+
+        private bool ChangesWereMade()
+        {
+            return alkatresz.Foto != Foto || alkatresz.Nev != Nev || alkatresz.Gyarto.Id != Gyarto.Id || alkatresz.Tipus != Tipus || alkatresz.Cikkszam != Cikkszam || alkatresz.MennyisegiEgyseg.Id != MennyisegiEgyseg.Id || alkatresz.Kategoria.Id != Kategoria.Id || alkatresz.Leiras != Leiras;
+        }
+
+        public bool OnBackButtonPressed()
+        {
+            if (ChangesWereMade())
+            {
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    if (await Application.Current.MainPage.DisplayAlert("Biztosan vissza akar lépni?", "Vannak nem mentett változtatások.", "Igen", "Mégse"))
+                    {
+                        await Application.Current.MainPage.Navigation.PopAsync();
+                    }
+                });
+                return true;
+            }
+            return false;
+        }
+        private async void CancelCommandExecute()
+        {
+            if (ChangesWereMade())
+            {
+                if(await Application.Current.MainPage.DisplayAlert("Biztosan vissza akar lépni?", "Vannak nem mentett változtatások.", "Igen", "Mégse"))
+                {
+                    await Application.Current.MainPage.Navigation.PopAsync();
+                }
+            }
+            else
+            {
+                await Application.Current.MainPage.Navigation.PopAsync();
+            }
         }
     }
 }

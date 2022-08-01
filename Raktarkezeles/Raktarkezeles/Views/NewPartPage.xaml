@@ -2,7 +2,8 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Raktarkezeles.Views.NewPartPage"
-             xmlns:mvvm="clr-namespace:Raktarkezeles.MVVM">
+             xmlns:mvvm="clr-namespace:Raktarkezeles.MVVM"
+             NavigationPage.HasNavigationBar="False">
     <ContentPage.Resources>
         <ResourceDictionary>
             <mvvm:ByteToImageConverter x:Key="byteToImage"/>
@@ -12,8 +13,11 @@
         <ScrollView VerticalScrollBarVisibility="Never">
             <StackLayout VerticalOptions="FillAndExpand" BackgroundColor="White">
                 <ImageButton Source="{Binding Foto, Converter={StaticResource byteToImage}, TargetNullValue={mvvm:ImageResource Raktarkezeles.Resources.Images.placeholder_edit.png}}"  Aspect="AspectFill" BackgroundColor="White" HeightRequest="240" Command="{Binding TakePictureCommand}"/>
+                <StackLayout Margin="0,-70,0,0" Orientation="Horizontal">
+                    <Button Text="↻" FontSize="30" FontAttributes="Bold" Command="{Binding RotateImageCommand}" CommandParameter="90" HorizontalOptions="StartAndExpand" HeightRequest="60" WidthRequest="60" Padding="-1" BackgroundColor="#5C585856"/>
+                    <Button Text="↺" FontSize="30" FontAttributes="Bold" Command="{Binding RotateImageCommand}" CommandParameter="-90" HorizontalOptions="EndAndExpand" HeightRequest="60" WidthRequest="60" Padding="-1" BackgroundColor="#5C585856"/>
+                </StackLayout>
                 <StackLayout Padding="10,0,10,0">
-                    <Button Text="Forgatás" Command="{Binding RotateImageCommand}" HorizontalOptions="CenterAndExpand"/>
                     <Label Text="Kép megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidFoto}"/>
                     <Entry Placeholder="Név" Text="{Binding Nev}" FontSize="20"/>
                     <Label Text="Név megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidNev}"/>
@@ -36,7 +40,10 @@
                     <Label Text="Kategória megadása kötelező!" TextColor="Red" IsVisible="{Binding InvalidKategoria}" />
                     <Editor Placeholder="Leírás" Text="{Binding Leiras}" AutoSize="TextChanges" FontSize="20"/>
                 </StackLayout>
-                <Button Text="Mentés" Command="{Binding AddPartCommand}" Margin="10" VerticalOptions="EndAndExpand"/>
+                <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                    <Button Text="Mégse" Command="{Binding CancelCommand}" Margin="10" VerticalOptions="EndAndExpand" HorizontalOptions="FillAndExpand"/>
+                    <Button Text="Mentés" Command="{Binding AddPartCommand}" Margin="10" VerticalOptions="EndAndExpand" HorizontalOptions="FillAndExpand"/>
+                </StackLayout>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

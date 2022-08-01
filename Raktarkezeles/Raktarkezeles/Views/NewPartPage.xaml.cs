@@ -1,13 +1,6 @@
 ﻿using Raktarkezeles.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using Raktarkezeles.Models;
 
 namespace Raktarkezeles.Views
 {
@@ -17,6 +10,12 @@ namespace Raktarkezeles.Views
         public NewPartPage()
         {
             InitializeComponent();
+        }
+        protected override bool OnBackButtonPressed()
+        {
+            bool result = (BindingContext as NewPartViewModel).OnBackButtonPressed();
+            base.OnBackButtonPressed();
+            return result;
         }
     }
 }
